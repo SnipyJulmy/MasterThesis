@@ -29,7 +29,11 @@
 
 \RequirePackage{csquotes}
 
-\RequirePackage[margin=2.5cm, left=2.5cm, right=2.5cm, twoside=true]{geometry}
+\RequirePackage{glossaries}
+\makeglossaries
+
+\RequirePackage[margin=2.5cm, left=2.5cm, right=2.5cm,
+twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 
 \let\@ThesisTitle\@empty
 \let\@Author\@empty
@@ -66,17 +70,19 @@
 \newmintedfile{scala}{frame=single, framesep=6pt, breaklines=true,
   fontsize=\scriptsize}
 
-\setlength{\headheight}{14pt}
-\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}
+\setlength{\headheight}{17pt}
 \pagestyle{fancy}
 
 % Standard pages (inside chapters)
 \fancyhf{}
 \renewcommand{\headrulewidth}{0.4pt}
 \renewcommand{\footrulewidth}{0pt}
+\fancyheadoffset{0cm}
+
 \fancyhead[OR]{\bfseries \nouppercase{\rightmark}}
 \fancyhead[EL]{\bfseries \nouppercase{\leftmark}}
 \fancyfoot[EL,OR]{\thepage}
+
 
 % First page of chapters
 \fancypagestyle{plain}{
@@ -156,5 +162,5 @@
 %%% Local Variables:
 %%% TeX-command-extra-options: "-shell-escape"
 %%% mode: latex
-%%% TeX-master: "thesis-example"
+%%% TeX-master: "thesis"
 %%% End:

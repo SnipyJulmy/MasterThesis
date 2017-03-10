@@ -1,6 +1,6 @@
-[submodule "influxdb-direct"]
-	path = influxdb-direct
-	url = ./influxdb-direct
-[submodule "with-mqtt-server"]
-	path = with-mqtt-server
-	url = ./with-mqtt-server
+[submodule "case-study-from-scratch-http"]
+	path = case-study-from-scratch-http
+	url = git@github.com:SnipyJulmy/APDL-from-scratch-http.git
+[submodule "case-study-from-scratch-mqtt"]
+	path = case-study-from-scratch-mqtt
+	url = git@github.com:SnipyJulmy/APDL-from-scratch-mqtt.git

@@ -1,0 +1,6 @@
+[submodule "influxdb-direct"]
+	path = influxdb-direct
+	url = ./influxdb-direct
+[submodule "with-mqtt-server"]
+	path = with-mqtt-server
+	url = ./with-mqtt-server

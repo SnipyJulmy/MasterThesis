@@ -4,3 +4,6 @@
 [submodule "case-study-from-scratch-mqtt"]
 	path = case-study-from-scratch-mqtt
 	url = git@github.com:SnipyJulmy/APDL-from-scratch-mqtt.git
+[submodule "APDL"]
+	path = APDL
+	url = git@github.com:SnipyJulmy/APDL.git

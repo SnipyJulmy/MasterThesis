@@ -70,6 +70,11 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \newmintedfile{scala}{frame=single, framesep=6pt, breaklines=true,
   fontsize=\scriptsize}
 
+% Arduino
+\newminted{arduino}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
+\newmintedfile{arduino}{frame=single, framesep=6pt, breaklines=true,
+  fontsize=\scriptsize}
+
 \setlength{\headheight}{17pt}
 \pagestyle{fancy}
 

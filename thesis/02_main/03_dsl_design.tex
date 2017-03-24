@@ -1,6 +1,38 @@
 \chapter{Design of the DSL}
 \label{cha:dsl-design}
 
+As mentionned by Van Deursen and Klint
+\cite{little_languages_little_maintenance}, one point is to cluster the
+knowledge we acquire into a set of semantic notions and opertions on them. This
+chapter will present the whole design of the APDL DSL. Firstly, we analyse all
+the concept we need to have for a complete DSL design for our case-study. Those
+concept include the data source, the transmission, the storage and finally the
+visualisation of the data.
+
+Then, we will present the design of the library which is implementing the
+clustered information.
+
+\section{Data source}
+\label{sec:dsl-design-data-source}
+
+The concept of data source include some different information :
+\begin{itemize}
+\item The source device
+\item The type of data
+\item The sampling
+\end{itemize}
+
+\subsection{Source device}
+\label{subsec:dsl-design-source-device}
+
+Firstly, we have to know that there is a lot of different existing device for
+the IoT programming, some of them are just connected ones like bluethoot tracker
+or smart device like fridge or door. For the purpose of the project we are just
+going the take device that are sensor oriented. All we want is to gather
+information for the environmment and communicate it to whatever we want.
+
+TODO : write about arduino and raspeberry
+
 %%% Local Variables:
 %%% mode: latex
 %%% TeX-master: "../thesis"

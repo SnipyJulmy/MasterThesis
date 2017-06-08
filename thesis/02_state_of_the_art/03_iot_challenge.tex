@@ -1,0 +1,61 @@
+\newChapter{Internet of Things challenge}
+\label{cha:iot_challenge}
+
+IoT is a huge area of research and development over the few past year,
+developer and researcher in this field face some serious challenge
+\cite{DBLP:conf/mipro/2015}\cite{Gubbi20131645}\cite{bendickson2016}:
+
+\begin{itemize}
+\item Device diversity (Arduino, Raspberry PI, physical sensors, biometric
+sensors)
+\item Software implementation (Linux, iOS, Windows, Android)
+\item Interactive modes (publisher/subscriber pattern, request/response
+pattern, command pattern, pull/push pattern)
+\item Engineering unit (degree Farenheit/degree Celsius, foot/metre, and
+many more)
+\item Power management and optimisation
+\item Connectivity, the device is connected with various protocols like ZigBee
+or MQTT
+\item Reliability, the device could be instantly checked and have some error
+handling application level
+\item Data description, we need to annotate the produced data (raw data are a problem)
+\item Various security problems:
+  \begin{itemize}
+  \item Physical security
+  \item Data exchange security
+  \item Cloud storage security
+  \item Update and patch
+  \end{itemize}
+\end{itemize}
+
+In this part, a state of the art and some various approaches for the
+IOT programming, development and design are presented. We will see some
+programming language which one could be the target of the DSL we are creating
+and some existing domain specific language. In the end, we fully describe the
+challenge of the IOT in order to offer a language which is able to answer all
+the developers wishes.
+
+TODO
+
+Power supply, power-optimized algorithm, network protocols
+
+Dynamic power management (DPM), to shud down device when they don’t need to be
+online
+
+DPM --> problem because of the latency and latency is an overall problem
+
+Reliability: device could be constantely checked and Error handling procedure
+in the application level
+
+Data curation and data brokering: device could produce a huge ammount of data
+
+Data projection
+
+Data description: metadata to describe raw-data
+
+Declarative programming for the IOT !!!
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../thesis"
+%%% End:

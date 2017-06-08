@@ -1,0 +1,71 @@
+\newChapter{Programming Language for the Internet of Things}
+\label{cha:proglang-for-iot}
+
+Using a programming language to create IOT Applications offer full control to
+the developer, but it comes to the handling of the challenge too. By the way, some
+language needs to embed interpreter and/or virtual machine in order to work. This
+adds some additional memory, power and processor use.
+
+\section{C/C++}
+\label{subsec:cc++}
+
+C and C++ are available for compilation on almost every platform, it’s a
+hardware focused language which is not too complex and offers great speed and
+memory management. The very big advantages is that C and C++ are compiled, they
+don’t need a runtime management and compiled binaries are very small for limited
+memory devices. From another point of view, the programmer needs to do almost
+everything by itself: memory management, pointer arithmetic error handling
+and, if we use C, there is no standard library for data structure and algorithm.
+
+Notice that the Arduino language is a subset of C and owns the same advantages
+and problems with memory management.
+
+Therefore, C and C++ are really good when it comes to a small device with very
+little memory and when no operating system are available.
+
+\section{Python}
+\label{subsec:python}
+
+Python is a programming language created in 1990 by Guido van Rossum, it’s an
+object-oriented, imperative and interpreted one. Because Python is interpreted,
+the language needs to run with a virtual machine.
+
+By the way, a tool named Cython\cite{behnel2010cython} is able to compile, after
+some work, a Python code to a C executable, which removes the interpreter and
+virtual machine needed at the origin.
+
+We can go further, some embedded system for IOT does not run an operating system
+(the Arduino for example) and Cython need to have access to some operating
+system features. But there is some work about the possibility to run Python
+without any OS\cite{jakeedge2015}.
+
+On the other hand, Python owns a great community with tons of tutorials and library
+for the IOT programming and especially with the Raspberry PI.
+
+\section{Java}
+\label{subsec:java}
+
+C and C++ are great programming language for the IOT, it becomes easier to manage
+and control the hardware with that language, but they are hardware specific
+too. We can’t write a program and run it into every possible hardware. Maybe a
+device is running on Linux and another one is running on Windows. The probably
+best answer to this problem is Java\cite{Waher:2015:LIT:2789499}, which supports
+multiple hardware design through his virtual machine if the IOT project run
+needs to run on different platforms.
+
+\section{Another Programming Languages}
+\label{subsec:other-prog-lang}
+
+There are many programming languages available for IOT development, we don’t want
+to describe them all but we want a small overview of the field for the
+development of the DSL. We could talk a lot about language like Go, Rust and
+Javascript, which could be very good for a specific part of an IOT project.
+
+We don’t need to know all the usable programming language for the IOT, but we
+need a target for our DSL and those languages advantages and disadvantages
+would be considering for further work.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../thesis"
+%%% End:

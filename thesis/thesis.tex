@@ -13,27 +13,43 @@
 
 \bibliography{bibliography.bib}
 
-\include{glossary}
+\input{glossary}
 
 \begin{document}
 
 \maketitle
-
 \makeinfopage
 
-\part{Introduction}
-\label{part:introduction}
+\tableofcontents
 
-\include{01_intro/01_introduction}
+\input{01_intro/01_introduction}
+
+\part{Background}
+
+\input{02_state_of_the_art/01_dsl}
+\input{02_state_of_the_art/02_scala_dsl}
+\input{02_state_of_the_art/03_iot_challenge}
+\input{02_state_of_the_art/04_pl_for_iot}
+\input{02_state_of_the_art/05_dsl_for_iot}
 
 \part{A Domain specific language for the Internet of Things}
-\label{part:dsl}
 
-\include{02_main/01_state_of_the_art}
-\include{02_main/02_a_dsl_for_iot}
-\include{02_main/03_dsl_design}
-\include{02_main/04_dsl_implementation}
-\include{02_main/05_dsl_test}
+\input{03_dsl/01_domain_of_interest}
+\input{03_dsl/02_different_dsl_for_different_purpose}
+\input{03_dsl/03_design}
+\input{03_dsl/04_implementation}
+
+\part{The APDL Ecosystem}
+
+\input{04_ecosystem/01_apdl_dsl}
+\input{04_ecosystem/02_serial_handler}
+\input{04_ecosystem/03_data_storage}
+\input{04_ecosystem/04_visualisation}
+
+\part{Validation and Result}
+\input{05_validation_and_results/01_tests_and_validation}
+\input{05_validation_and_results/02_results}
+\input{05_validation_and_results/03_conclusion}
 
 \printbibliography
 
@@ -46,7 +62,7 @@
 \end{document}
 
 %%% Local Variables:
-%%% TeX-command-extra-options: "-shell-escape"
+%%% TeX-command-extra-options: "-shell-escape -jobname ./output-file"
 %%% mode: latex
 %%% TeX-master: t
 %%% End:

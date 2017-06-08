@@ -17,7 +17,7 @@
 
 % Colors & graphics
 \RequirePackage[table]{xcolor}
-\RequirePackage[pdftex]{graphicx}
+\RequirePackage{graphicx}
 
 \RequirePackage{titlesec}
 \RequirePackage[chapter]{minted}
@@ -107,7 +107,30 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 	\ifodd\value{page}\else\mbox{}\thispagestyle{empty}\fi%
 }
 
-\newcommand{\makeinfopage}{Info page}
+\newcommand{\makeinfopage}{
+    TODO
+    Info page
+}
+
+\newcommand{\newChapter}[1]{
+  {
+    \titleformat{\chapter}[display]
+    {\normalfont\Large\filcenter\sffamily}
+    {\titlerule[1pt]%
+    \vspace{1pt}%
+    \titlerule
+    \vspace{1pc}%
+    \LARGE\MakeUppercase{\chaptertitlename} \thechapter}
+    {1pc}
+    {
+      \titlerule
+      \vspace{1pc}%
+      \Huge
+    }
+    \chapter{#1}
+    \newpage
+  }
+}
 
 % \cleardoublepage replaced by \cleartoodd
 \let\origdoublepage\cleardoublepage

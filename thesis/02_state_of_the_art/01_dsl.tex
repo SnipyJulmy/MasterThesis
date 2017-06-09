@@ -1,10 +1,12 @@
 \newChapter{Domain specific language}
 \label{cha:a-dsl}
 
-A Domain specific language (DSL) is a programming language which the goal is
+\section{Introduction}
+\label{sec:dsl_intro}
+
+A \gls{DSL} is a programming language whose the goal is
 to provide a way to solve specific domain problem. For example, Matlab is a
-domain specific language because, in the first place, it was for matrix
-manipulation and mathematic.
+domain specific language created to simplify matrix calculus.
 
 What we call ``domain'' is a set of problem related together in the same scope.
 For Matlab, those domain could be a matrix multiplication or the resolution of a
@@ -14,9 +16,7 @@ that is the ``domain'' of Matlab.
 This chapter will introduce and discuss the question ``Why use a DSL ?'' by
 exposing some advantages that \gls{APDL} could bring for non-IoT-developers.
 Then we present the diffenrence between an internal and an external DSL and the
-advantages and disadvantages for both of them. Then we will conclude this
-chapter by exposing the development phase of a DSL describe by Van Deursen and
-Klint \cite{little_languages_little_maintenance}.
+advantages and disadvantages for both of them. After introducing some technics
 
 \section{Why use a Dsl ?}
 \label{sec:why-use-dsl}
@@ -28,17 +28,28 @@ TODO
 
 TODO
 
-\section{Advantages and Disadvantages}
-\label{sec:dsl-advantages-disadvantages}
-
-TODO
-
-\section{Implementation of a Domain specific language}
+\section{Implementation of a Domain specific language with Scala}
 \label{sec:implementation_of_a_dsl}
 
 TODO
 
-\section{Development phase of a Domain specific language}
+\subsection{Internal Domain specific language}
+\label{subsec:scala_internal_dsl}
+
+TODO
+
+\subsection{External Domain specific language}
+\label{subsec:scala_external_dsl}
+
+TODO
+
+\subsection{The LMS approach}
+\label{subsec:lms_approach}
+
+TODO
+
+\subsection{Parser combinator}
+\label{subsec:parser_combinator}
 
 TODO
 

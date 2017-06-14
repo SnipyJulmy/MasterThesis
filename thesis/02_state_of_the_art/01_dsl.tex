@@ -13,21 +13,20 @@ For Matlab, those domains could be a matrix multiplication or the resolution of 
 equation system. Those two operations are related to numerical mathematics and
 that is the ``domain'' of Matlab.
 
-This chapter will introduce and discuss the question : ``Why use a DSL ?'' by
-exposing some advantages that \gls{APDL} could bring for non-IoT developers from
-the \gls{DSL} point of view.
-Then we present the difference between an internal and an external DSL and the
-advantages and disadvantages for both of them. Finally, we introduce the
+This chapter introduce and discuss the question : ``Why use a DSL ?'' by
+explaining the advantages that a \gls{DSL} could bring for domain-oriented
+problems. Then we present the difference between an internal and an external DSL
+and the advantages and disadvantages for both of them. Finally, we introduce the
 implementation of a \gls{DSL} using the Scala programming language and why Scala
 is a great tool for the development of \gls{DSL}.
 
-\section{Why use a Dsl ?}
+\section{Why use a DSL ?}
 \label{sec:why-use-dsl}
 
 \gls{DSL} exist since the beginning of computing, according to
-\cite{vandeursenarieklintpaulvisserjoost2000}, Cobol, Lisp and Fortran has been
+\cite{VanDeursen2000}, COBOL, Lisp and Fortran have been
 created for solving problems in a certain area : business processing, numeric
-computation and symbolic processing. With time, language has become more and
+computations and symbolic processing. With time, language has become more and
 more generalist but \gls{DSL} has always been created to simplify some domain
 specific problems.
 
@@ -36,24 +35,24 @@ disadvantages.
 
 \paragraph{Advantages:}
 \begin{itemize}
-\item High potential of utilisability, reutilisability, fiability according to
-  \cite{Tolvanen:2010:IMD:2060329.2060354}.
+\item High potential of usability and reliability according to
+  \cite{Tolvanen2010}.
 \item A great learning curve because a DSL is, in general, easier to learn than a
-  general programming language \cite{mernikmarjanheeringjansloaneanthonym.2005}.
+  general programming language \cite{Mernik2005}.
 \item An expert of the DSL could modify the application even without knowing how
-  to programm.
+  to program.
 \end{itemize}
 
-\paragraph{Disadvantages \cite{vandeursenarieklintpaulvisserjoost2000}:}
+\paragraph{Disadvantages \cite{VanDeursen2000}:}
 \begin{itemize}
-\item There is a cost to develop a DSL : production, user formation and
+\item There is a cost to develop a DSL : production, user training and
   maintenance .
-\item Non expert user may find hard to modify an existing programm
+\item Non-expert user may find hard to modify an existing program
 \item In general, DSL are less efficient than general programming language,
-  because the programming language ownes some very good compiler with a lot of
+  because the programming language owns some very good compiler with a lot of
   optimisation.
-\item Need to learn a new language, even if it's a simple one.
-\item A DSL don't have any tool support (other than a compiler of course) \cite{mernikmarjanheeringjansloaneanthonym.2005}.
+\item Need to learn a new language, even if it’s a simple one.
+\item A DSL don’t have any tool support (other than a compiler of course) \cite{Mernik2005}.
 \end{itemize}
 
 \section{Internal and External Domain specific language}
@@ -68,7 +67,7 @@ The main difference between this two concept appears at the compilation time,
 the figure \ref{fig:internal_dsl_compilation} shows the compilation of an
 internal DSL. The input and the output of the compiler are in the same language.
 Then, the figure \ref{fig:external_dsl_compilation} shows the compilation of an
-external DSL. This time, the output is in an another language, we call that
+external DSL. This time, the output is in another language, we call that
 language the host language.
 
 \begin{figure}[ht]
@@ -79,7 +78,7 @@ language the host language.
   \caption[Compilation process of an internal \gls{DSL}]{Compilation process of
     an internal Domain specific language. The input and output Language are the
     same. In general, we could see the input language as a library (with or
-    without syntastic sugar) for more general programming language.}
+    without syntactic sugar) for more general programming language.}
   \label{fig:internal_dsl_compilation}
 \end{figure}
 
@@ -94,20 +93,20 @@ language the host language.
   \label{fig:external_dsl_compilation}
 \end{figure}
 
-\subsection{Internal Domain specific language}
+\subsection{Internal Domain Specific Language}
 \label{sec:internal_dsl}
 
-As shown in figure \ref{fig:internal_dsl_compilation}, the dedicated language
+As shown in the figure \ref{fig:internal_dsl_compilation}, the dedicated language
 and the output language is the same. Internal \gls{DSL} could be separate into
-two categorie : \gls{DEDSL} and \gls{SEDSL}.
+two categories : \gls{DEDSL} and \gls{SEDSL}.
 
-Conceptualy, a \gls{SEDSL} captures the semantic notions of the data's domain in
+Conceptually, a \gls{SEDSL} captures the semantic notions of the data’s domain in
 various data type and manipulate those data in a fixed way. Alternately, a
 \gls{DEDSL} goes beyond the captures of semantic notions by capturing the
-operation themselves. As an example for understanding those two concept we look
-at listing \ref{lst:deep_vs_shallow_source}. It's a small imaginary DSL used for
+operation themselves. As an example for understanding those two concepts we look
+at listing \ref{lst:deep_vs_shallow_source}. It’s a small imaginary DSL used for
 temperature manipulation between Kelvin and Celsius. We compute the sum
-of three temperature and we want to print it in Celsius.
+of three temperatures, and we want to print it in Celsius.
 
 \begin{listing}[ht]
 \centering
@@ -119,14 +118,14 @@ val t4 = t1 + t2 + t3
 println(t4 in Celsius)
 \end{scalacode}
 \caption[Usage of the simple Temperature \gls{DSL}]{Example of the simple
-Temperature \gls{DSL}. We simply want to compute the sum of three temperature,
-in celsius and kelvin, and finally want to print the result.}
+Temperature \gls{DSL}. We simply want to compute the sum of three temperatures,
+in Celsius and Kelvin, and finally want to print the result.}
 \label{lst:deep_vs_shallow_source}
 \end{listing}
 
-Now we are going the compare the simple implementation of this \gls{DSL} for
-both \gls{DEDSL} and \gls{SEDSL}. The implementation for the \gls{SEDSL} is
-shwon in listing \ref{lst:shallow_temp_scala} and for the \gls{DEDSL} it's
+Now we are going to compare the simple implementation of this \gls{DSL} for
+both \gls{DEDSL} and \gls{SEDSL}. The implementation of the \gls{SEDSL} is
+shown in listing \ref{lst:shallow_temp_scala} and for the \gls{DEDSL} its
 listing \ref{lst:deep_temp_scala}.
 
 \begin{listing}[ht]
@@ -206,15 +205,15 @@ t4: Add = Add(Add(Celsius(100.0),Celsius(100.0)),Kelvin(100.0))
 InCelsius(Add(Add(Celsius(100.0),Celsius(100.0)),Kelvin(100.0)))
   \end{scalacode}
   \caption[Result of the \gls{SEDSL} for Temperature]{Result of the small
-    Temperature programm from listing \ref{lst:deep_temp_scala}. The result
-    represent the way to think about a \gls{SEDSL}. We captures the semantic of
+    Temperature program from listing \ref{lst:deep_temp_scala}. The result
+    represents the way to think about a \gls{SEDSL}. We capture the semantic of
     the computation.}
   \label{fig:dsl_shallow_result}
 \end{figure}
 
 With the \gls{SEDSL}, we save the \gls{AST} of the computation and we never
 touch the values. The figure \ref{fig:dsl_shallow_result} shows the output for
-the \gls{DEDSL}. The object is evolving over the time.
+the \gls{DEDSL}. The object is evolving over time.
 
 \begin{figure}[ht]
   \centering
@@ -227,29 +226,29 @@ t4: Temperature = Celsius(26.850000000000023)
 Celsius(26.850000000000023)
   \end{scalacode}
   \caption[Result of the \gls{DEDSL} for Temperature]{Result of the small
-    Temperature programm from listing \ref{lst:deep_temp_scala}. The result
-    represent the way to think about a \gls{DEDSL}. We capture the operation and
+    Temperature program from listing \ref{lst:deep_temp_scala}. The result
+    represents the way to think about a \gls{DEDSL}. We capture the operation and
   we manipulate the information.}
   \label{fig:dsl_deep_result}
 \end{figure}
 
 In general, internal \gls{DSL} are closely related to the host language and some
 of them are very good in this work. Language that offer operator overloading,
-parametric polymorphism and functional mechanisms gives a good user experience
+parametric polymorphism and functional mechanisms give a good user experience
 and developer satisfaction as well.
 
-\subsection{External Domain specific language}
+\subsection{External Domain Specific Language}
 \label{sec:external_dsl}
 
-By opposition with an internal \gls{DSL}, an external \gls{DSL} is not built in
-top of an host language. This kind of \gls{DSL} is completely independent from
+By opposition with an internal \gls{DSL}, an external \gls{DSL} is not built on
+top of a host language. This kind of \gls{DSL} is completely independent from
 any general programming language or another \gls{DSL}.
 
 Developing an external \gls{DSL} needs additional work :
 \begin{itemize}
 \item A parser in order recover the information from the source code
 \item A code generator
-\item Anything we want from other programming language
+\item Anything we want from other programming languages
 \end{itemize}
 
 An external \gls{DSL} is very close to a programming language, except that a
@@ -259,22 +258,23 @@ An external \gls{DSL} is very close to a programming language, except that a
 \label{sec:external_vs_internal}
 
 External and internal \gls{DSL} are very different from each other,
-understanding the differences, strengh and weaknesses of each are crucial for
-further \gls{DSL} developement.
+understanding the differences, strength and weaknesses of each are crucial for
+further \gls{DSL} development.
 
 \subsubsection{External \gls{DSL}:}
 
+
 External \gls{DSL} come with the advantage that the \gls{DSL} designers may
-define any possible syntax without any limitation \cite{strembeckmarkzdunuwe2009}. It could be textual,
-graphical or even audio-visual (vocal command). Thus, because an external
+define any possible syntax without any limitation \cite{Strembeck2009}. It could be textual,
+graphical or even audiovisual (vocal command). Thus, because an external
 \gls{DSL} is not bound to a specific host language or platform, the \gls{DSL}
-could be used in any way and might be export to additional target language or
-platform trough transformation \cite{strembeckmarkzdunuwe2009}. Finally, it's
-almost impossible to accidently use a feature that is not part of the \gls{DSL}
+could be used in any way and might be exported to additional target language or
+platform through transformation \cite{strembeckmarkzdunuwe2009}. Finally, it’s
+almost impossible to accidentally use a feature that is not part of the \gls{DSL}
 \cite{strembeckmarkzdunuwe2009}.
 
-On the other hand, an external \gls{DSL} do not ownes any tool or support. There
-is no compiler, no parser, no error checking, etc... Everything as to be done
+On the other hand, an external \gls{DSL} do not own any tool or support. There
+is no compiler, no parser, no error checking, hand so on. Everything as to be done
 with the language creation.
 
 \subsubsection{Internal \gls{DSL}:}
@@ -282,45 +282,45 @@ with the language creation.
 An internal \gls{DSL} always comes with a host language, that implies that the
 \gls{DSL} designer and user have access to the features of the host language
 \cite{strembeckmarkzdunuwe2009}. Moreover, all the tools related to the host
-language are accessible. That's include : compiler, parser, debugger,
-interpreter, code analysis tool and so on \cite{strembeckmarkzdunuwe2009}.
+language are accessible. That includes : compiler, parser, debugger,
+interpreters, code analysis tools and so on \cite{strembeckmarkzdunuwe2009}.
 
 Another advantage of the internal \gls{DSL} is the support they have from
 programming language. Some programming language as a very good support by
-default for the developement and usage of \gls{DSL}. For example, Scala and Ruby
-gives some syntastic sugar which gives a pleasant way of developement to the
+default for the development and usage of \gls{DSL}. For example, Scala and Ruby
+give some syntactic sugar which gives a pleasant way of development to the
 user and designer.
 
 In contrast to an external \gls{DSL}, the user of the \gls{DSL} may use some
-features by accident and, at the runtime, the errors whose occurs could be
-difficult to uderstand and not managed by the \gls{DSL} designer.
+features by accident and, at the runtime, the occurring errors could be
+difficult to understand and not managed by the \gls{DSL} designer.
 
 \section{Implementation of a Domain specific language with Scala}
 \label{sec:implementation_of_a_dsl}
 
-The Scala programming language some great advantages over the others standard
+The Scala programming language some great advantages over the other standard
 programming languages like Java or C. This section will cover the implementation
 of external and internal \gls{DSL} with Scala as well as some example of
 implementation. Finally, we will introduce the \gls{LMS} approach for internal
 and external \gls{DSL}.
 
 In order to illustrate the implementation of an external and internal \gls{DSL}
-with Scala, we will create simple language which represent a calculator. The
-\gls{DSL} will be able to parse a simple computation on natural number like $1 +
+with Scala, we will create simple language which represents a calculator. The
+\gls{DSL} will be able to parse a simple computation on natural numbers like $1 +
 2 * 4$ and will compute the result and display it.
 
-\subsection{External Domain specific language}
+\subsection{External Domain Specific Language}
 \label{subsec:scala_external_dsl}
 
-External \gls{DSL} could be write in any programming language, from C to Java
-via Haskell. The reason we use Scala is to be coherent with the internal
-\gls{DSL} development. One of the goal of this thesis is to explore the
+External \gls{DSL} could be written in any programming language, from C to Java
+via Haskell. The reason we use Scala is to be consistent with the internal
+\gls{DSL} development. One of the goals of this thesis is to explore the
 \gls{LMS} approach (available in section \ref{subsec:lms_approach}) for
-\gls{DSL} development and this is a Scala ortiented approach.
+\gls{DSL} development and this is a Scala oriented approach.
 
-Implementing a external \gls{DSL} is quiet the same as implementing a general
-programming language. The difference is that it's simplier because the \gls{DSL}
-is smaller than a programming language. In order to develope an external
+Implementing an external \gls{DSL} is quite the same as implementing a general
+programming language. The difference is that it’s simpler because the \gls{DSL}
+is smaller than a programming language. In order to develop an external
 \gls{DSL} we need the following component :
 
 \begin{itemize}
@@ -330,19 +330,19 @@ is smaller than a programming language. In order to develope an external
 \end{itemize}
 
 
-The parsing part could be achieve with different libraries or framework. We can
-also create or own tokenizer and parser from scratch, the advantages of that
-technics is that we can optimize the parser and specialize it for the exact
+The parsing part could be achieved with different libraries or framework. We can
+also create or own tokenizer and parser from scratch, the advantage of that
+technic is that we can optimise the parser and specialise it for the exact
 syntax of our \gls{DSL}.
 
 A big part of the parsing library in Scala are built using the parser combinator
-methods. Basically, a parser combinator is a \gls{HOF} that accept
-some parsers in input and return a parser. The parser is a function that accept
-a string in input and return a structure in output. The combination of several
-of those \gls{HOF} create parser which are more and more complex.
+methods. Basically, a parser combinator is a \gls{HOF} that accepts
+some parsers in input and returns a parser. The parser is a function that accepts
+a string in input and returns a structure in output. The combination of several
+of those \gls{HOF} create parser which is more and more complex.
 
-Parser combinator in Scala are very similar to the \gls{EBNF} syntax. Listing
-\ref{lst:Simple-calculator-parser} shows the parser for our little calculator
+Parser combinator in Scala is very similar to the \gls{EBNF} syntax. Listing
+\ref{lst:Simple-calculator-parser} shows the parser for our little calculator.
 \gls{DSL}.
 
 \begin{listing}[ht]
@@ -374,7 +374,7 @@ class SimpleCalculatorParser extends RegexParsers with PackratParsers {
 }
 \end{scalacode}
 \caption[Implementation of the simple calculator parser]{Implementation of the
-simple calculator parser. The different parser are combining and they produce
+simple calculator parser. The different parser are combining, and they produce
 the \gls{AST} for each expression separately before generating the whole structure.}
 \label{lst:Simple-calculator-parser}
 \end{listing}
@@ -397,7 +397,7 @@ case class Div(left: Expr, right: Expr) extends Expr
 \end{scalacode}
 \caption[\gls{AST} representation of the simple calculator \gls{DSL}]{\gls{AST}
 representation of the simple calculator \gls{DSL}. Scala case classes and sealed
-traits are very usefull for this kind of representation.}
+traits are very useful for this kind of representation.}
 \label{lst:Simple-calculator-ast}
 \end{listing}
 
@@ -406,7 +406,7 @@ Now we need to compute the result of the expression represented by the
 leaf and finally obtain the result of our expression. The listing
 \ref{lst:Simple-calculator-interpreter} shows the interpreter for the simple
 calculator \gls{DSL}. In a case of code generation, instead of returning the
-evaluation of the \gls{AST}, we return the set of operation that are necessary
+evaluation of the \gls{AST}, we return to the set of operations that are necessary
 to obtain the same result on a different platform or programming language.
 
 \begin{listing}[ht]
@@ -423,23 +423,23 @@ sealed trait Expr {
 }
 \end{scalacode}
 \caption[Interpreter of the simple calculator \gls{DSL}]{Interpreter of the
-simple calculator \gls{DSL}, each expression is evaluate recursively. In a case
-of code generation, we dont return a result of the expression, but the
+simple calculator \gls{DSL}, each expression is evaluated recursively. In a case
+of code generation, we don’t return a result of the expression, but the
 successive operation to get this result on another platform.}
 \label{lst:Simple-calculator-interpreter}
 \end{listing}
 
-\subsection{Internal Domain specific language}
+\subsection{Internal Domain Specific Language}
 \label{subsec:scala_internal_dsl}
 
 Scala is a great language for developing internal \gls{DSL}. The language itself
-offer some great features and syntaxic sugar in order to create a user-friendly
+offer some great features, and syntactic sugar in order to create a user-friendly
 syntax. Those advantages are the following \cite{filipkrikava2013}:
 
 \begin{itemize}
 \item Curried function
 \item Implicit function, class and parameters
-\item Ommiting parenthesis
+\item Omitting parenthesis
 \item No end statement symbol ('';'')
 \item Infix operator syntax for methods
 \item Operator overloading
@@ -499,12 +499,12 @@ the implementation is showing some advantages of using Scala.}
 \end{listing}
 
 The listing \ref{lst:Simple-calculator-internal-dsl} is also showing some
-features of Scala in action. The implicit definition {\normalsize \verb|Int2ScInt|} is used to
+features of Scala in action. The implicit definition \scalainline{int2ScInt} is used to
 convert standard Scala Int into our special kind of Int named ScInt. We create
 new methods named ``+'', ``-'', and so on and we used them with the infix
-notation : {\normalsize \verb|2 + 3|} is the same as {\normalsize \verb|2.+(3)|} and we use
-methods from the standard Scala library, in this case {\normalsize
-\verb|println|}, with our \gls{DSL}.
+notation : \scalainline{2 + 3} is the same as \scalainline{2.+(3)}. By the way,
+we are also using methods from the standard Scala library, in this case
+\scalainline{println}, with our \gls{DSL}.
 
 Finally, we could define new type with Scala. Listing
 \ref{lst:Simple-calculator-internal-dsl} is not showing a great example for that
@@ -512,7 +512,7 @@ but we can define type for everything. For example, a set of integer may be seen
 as a function $Int \rightarrow Boolean$ so, in Scala, we could define the set
 type with :
 
-\mintinline{scala}{type set[A] = A => Boolean}
+\scalainline{type Set[A] = A => Boolean}
 
 Declaring new type is usefull for the \gls{DSL} designer as well as for the user
 because the written code becomes clearer.
@@ -562,9 +562,9 @@ for(i <- 0 until 3 : Rep[Range]) {
   \label{lst:lms-example}
 \end{figure}
 
-\paragraph{Loop $A$:}
+\textbf{Loop $A$:}
 
-The code \mintinline{scala}{0 until 3 : Range} is fully known at the compile time. So
+The code \scalainline{0 until 3 : Range} is fully known at the compile time. So
 the compiler don't have to produce a loop and it produce the following :
 \begin{scalacode}
 doSomething(0)
@@ -572,9 +572,9 @@ doSomething(1)
 doSomething(2)
 \end{scalacode}
 
-\paragraph{Loop $Rep[A]$:}
+\textbf{Loop $Rep[A]$:}
 
-The code \mintinline{scala}{0 until 3 : Rep[Range]} is not completely known at
+The code \scalainline{0 until 3 : Rep[Range]} is not completely known at
 the compile time. So the compiler will produce a loop in accordance with the
 semantic of the operation.
 \begin{scalacode}
@@ -585,6 +585,18 @@ while(x < 3) {
 	x += 1
 }
 \end{scalacode}
+
+\section{Summary}
+\label{sec:dsl_summary}
+
+In this chapter we saw what is a \gls{DSL}, his advantages, disadvantages and
+different kind of \gls{DSL}. External \gls{DSL} could be seen as a programming
+language with lesser features and domain-specific oriented. Internal \gls{DSL}
+owns two branches : \gls{DEDSL} and \gls{SEDSL}, each of those are design and
+built differently but also in a host language. Finally, we studies and
+illustrate the implementation of any kind of \gls{DSL} using the Scala
+programming and explain why Scala is a great language to build \gls{DSL} by
+showing various libraries to create \gls{DSL}.
 
 %%% Local Variables:
 %%% mode: latex

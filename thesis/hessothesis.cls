@@ -9,7 +9,16 @@
 \RequirePackage[english]{babel}
 
 % for bibliography
-\RequirePackage[backend=biber,style=chem-angew,sortlocale=en_GB,natbib=true,url=false,doi=true,eprint=false]{biblatex}
+\RequirePackage[
+  backend=biber,
+  style=chem-angew,
+  sortlocale=en_GB,
+  natbib=true,
+  url=false,
+  doi=true,
+  eprint=false,
+  citestyle=ieee
+]{biblatex}
 
 % Page style
 \RequirePackage{fullpage}
@@ -65,10 +74,14 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
+%% Minted settings
+\usemintedstyle{tango}
+
 % Scala
 \newminted{scala}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
 \newmintedfile{scala}{frame=single, framesep=6pt, breaklines=true,
   fontsize=\scriptsize}
+\newmintinline{scala}{breaklines=true,fontsize=\small}
 
 % Arduino
 \newminted{arduino}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}

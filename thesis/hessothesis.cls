@@ -29,7 +29,7 @@
 \RequirePackage{graphicx}
 
 \RequirePackage{titlesec}
-\RequirePackage[chapter]{minted}
+\RequirePackage[chapter,cache=false]{minted}
 \RequirePackage{amsmath}
 
 \RequirePackage[toc,page]{appendix}

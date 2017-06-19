@@ -33,7 +33,7 @@ specific problems.
 Using a DSL instead of a programming language brings advantages as well as
 disadvantages.
 
-\paragraph{Advantages:}
+\textbf{Advantages:}
 \begin{itemize}
 \item High potential of usability and reliability according to
   \cite{Tolvanen2010}.
@@ -43,7 +43,7 @@ disadvantages.
   to program.
 \end{itemize}
 
-\paragraph{Disadvantages \cite{VanDeursen2000}:}
+\textbf{Disadvantages \cite{VanDeursen2000}:}
 \begin{itemize}
 \item There is a cost to develop a DSL : production, user training and
   maintenance .
@@ -261,11 +261,11 @@ External and internal \gls{DSL} are very different from each other,
 understanding the differences, strength and weaknesses of each are crucial for
 further \gls{DSL} development.
 
-\subsubsection{External \gls{DSL}:}
-
+\subsubsection{External \gls{DSL}}
+\label{subsubsec:external_dsl}
 
 External \gls{DSL} come with the advantage that the \gls{DSL} designers may
-define any possible syntax without any limitation \cite{Strembeck2009}. It could be textual,
+define any possible syntax without any limitation\cite{strembeckmarkzdunuwe2009}. It could be textual,
 graphical or even audiovisual (vocal command). Thus, because an external
 \gls{DSL} is not bound to a specific host language or platform, the \gls{DSL}
 could be used in any way and might be exported to additional target language or
@@ -277,7 +277,8 @@ On the other hand, an external \gls{DSL} do not own any tool or support. There
 is no compiler, no parser, no error checking, hand so on. Everything as to be done
 with the language creation.
 
-\subsubsection{Internal \gls{DSL}:}
+\subsubsection{Internal \gls{DSL}}
+\label{subsubsec:internal_dsl}
 
 An internal \gls{DSL} always comes with a host language, that implies that the
 \gls{DSL} designer and user have access to the features of the host language
@@ -543,17 +544,17 @@ corresponding scala code for each of those loops.
   \centering
 \begin{scalacode}
 def doSomething(i : Int) : Rep[Unit] = {
-	println(i)
+  println(i)
 }
 
 // A
 for(i <- 0 until 3 : Range) {
-	doSomething(i)
+  doSomething(i)
 }
 
 // Rep[A]
 for(i <- 0 until 3 : Rep[Range]) {
-	doSomething(i)
+  doSomething(i)
 }
 \end{scalacode}
   \caption[Difference between \(A\) and \(Rep\lbrack A\rbrack\) in a code example]{$A$ represent
@@ -581,8 +582,8 @@ semantic of the operation.
 var x = 0
 while(x < 3) {
   val i = x
-	doSomething(i)
-	x += 1
+  doSomething(i)
+  x += 1
 }
 \end{scalacode}
 

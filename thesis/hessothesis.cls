@@ -4,7 +4,6 @@
 
 \RequirePackage{etoolbox}
 \RequirePackage{sourcecodepro}
-\RequirePackage[utf8]{inputenc}
 \RequirePackage[T1]{fontenc}
 \RequirePackage[english]{babel}
 
@@ -21,7 +20,6 @@
 ]{biblatex}
 
 % Page style
-\RequirePackage{fullpage}
 \RequirePackage{fancyhdr}
 
 % Colors & graphics
@@ -43,6 +41,10 @@
 
 \RequirePackage[margin=2.5cm, left=2.5cm, right=2.5cm,
 twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
+
+\vbadness=10000
+\widowpenalties 1 10000
+\raggedbottom
 
 \let\@ThesisTitle\@empty
 \let\@Author\@empty
@@ -72,6 +74,7 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \newcommand{\AuthorEmail}[1]{\gdef\@AuthorEmail{#1}}
 \newcommand{\Orientation}[1]{\gdef\@Orientation{#1}}
 
+
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
 
 %% Minted settings
@@ -87,6 +90,16 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \newminted{arduino}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
 \newmintedfile{arduino}{frame=single, framesep=6pt, breaklines=true,
   fontsize=\scriptsize}
+\newmintinline{arduino}{breaklines=true,fontsize=\small}
+
+% Mbed
+\newminted{cpp}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
+\newmintedfile{cpp}{frame=single, framesep=6pt, breaklines=true,
+  fontsize=\scriptsize}
+\newmintinline{cpp}{breaklines=true,fontsize=\small}
+
+% Apdl
+\newminted[apdlcode]{scala}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
 
 \setlength{\headheight}{17pt}
 \pagestyle{fancy}
@@ -101,6 +114,7 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \fancyhead[EL]{\bfseries \nouppercase{\leftmark}}
 \fancyfoot[EL,OR]{\thepage}
 
+\graphicspath{{./img/}}
 
 % First page of chapters
 \fancypagestyle{plain}{

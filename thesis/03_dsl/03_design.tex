@@ -4,50 +4,307 @@
 \section{Introduction}
 \label{sec:design_intro}
 
-TODO
+This chapter will present the design of the \gls{APDL} \gls{DSL}. Firtly, we
+expose the domain of interest and some kind of a generalisation of the embedded
+code we produce. The domain of interest regroup all the relevant information
+related to the \gls{DSL} we create. This chapter will present some general part
+of the embedded systems we want to generate. As a reminder, we want to generate
+the code for some devices that are going to recover some data trough
+sensor, apply transformation on it and send them trough a communication network
+like a serial port.
 
-\section{Device}
-\label{sec:dsl-design-data-source}
+The second part is about the fragmentation of \gls{APDL}. We are going the
+present why \gls{APDL} is separate in multiple \gls{DSL} or language and explain
+the advantages and disadvantages of this methods.
 
-The concept of data source include some different information :
+Finally we present the final choosen design of the \gls{APDL} \gls{DSL} and the
+explaination on the choice of making an external \gls{DSL} instead of another
+one.
+
+\section{Domain of interest}
+\label{sec:design_domain_of_interest}
+
+According to \cite{little_languages_little_maintenance}, the development phases
+of a \gls{DSL} requires a thorough understanding of the underlying domain. The
+recommandation is to follow the next seven points\cite{little_languages_little_maintenance}.
 
 \begin{itemize}
-\item The source device
-\item The type of data
-\item The sampling
+\item Identify problem domain of interest.
+\item Gather all relevant knowledge in this domain.
+\item Cluster this knowledge in a handful of semantic notions and operations on them.
+\item Construct a library that implements the semantic notions.
+\item Design a DSL that concisely describes applications in the domain.
+\item Design and implement a compiler that translates DSL programs to a sequence of library calls.
+\item Write DSL programs for all desired applications and compile them. The
 \end{itemize}
 
-\subsection{Source device}
-\label{subsec:dsl-design-source-device}
+The point ``Identify problem domain of interest'' as been treated in chapter
+\ref{cha:iot_challenge}. Now, we will gather the relevant information on our
+specific domain.
 
-Firstly, we have to know that there is a lot of different existing device for
-the IoT programming, some of them are just connected ones like bluethoot tracker
-or smart device like fridge or door. For the purpose of the project we are just
-going the take device that are sensor oriented. All we want is to gather
-information for the environmment and communicate it further.
+\section{Generalisation of the Embedded Framework}
+\label{sec:generalisation_framework}
 
-In order to manage a varous kind of device, we will use the PlatformIO tool.
+``What do we want ?''
 
-\subsubsection{PlatformIO}
-\label{sec:dsl-design-source-device-platformio}
+That's the first questions to ask when we start analysing the domain's problems.
+As an answer, we propose the following :
 
-TODO
+{ \Large \textit{``We want to simply design a system, depending on a specific
+    device, that is capable of recovering some input data, transform and
+    send them through a network.''}
+}
 
-\subsubsection{Source properties}
-\label{sec:dsl-design-source-properties}
+Note that the previous sentence doesn't care about what's happening to the
+transfered data. Including handling, storage and visualisation. This part is
+treated in chapter \ref{chap:apdl_ecosystem}.
 
-The major property of Source is his developement framework. A lot of various framework exist for embeded programming :
-begin
+We are going to take two examples, one with the Arduino Framework and one with
+the Mbed SDK, and try to generalise the concept between each other. The listing
+\ref{lst:arduino_generalisation} showed the Arduino code and the listing
+\ref{lst:mbed_generalisation} is showing the Mbed ones. The two code have the
+same goal :
 
-\subsubsection{Type of data}
-\label{sec:dsl-design-type-of-data}
+\begin{itemize}
+\item Recover two analogical input, the temperature and the luminosity.
+\item Transform the temperature with a function.
+\item Send the data each second.
+\end{itemize}
 
-\subsubsection{Sampling}
-\label{sec:dsl-design-sampling}
+\begin{figure}[ht]
+  \centering
+\begin{scalacode}
+#include "Timer.h"
 
+Timer timer;
 
-TODO : write about arduino and mbed
+int pinLum = 1;
+int pinTemp = 0;
 
+float decode_temperature(int x){
+  int B = 3975;
+  float resistance = ((((float)(1023 - x)) * 1000) / x);
+  float temperature = ((1 / ((log((resistance / 1000)) / B) + (1 / 298.15))) - 273.15);
+  return temperature;
+}
+
+void sendLum(){
+  int data = analogRead(pinLum);
+  byte * b = (byte *) &data;
+  Serial.write(b,4);
+}
+
+void sendTemperature(){
+  int rawData = analogRead(pinTemp);
+  float data = decode_temperature(rawData);
+  byte * b = (byte *) &data;
+  Serial.write(b,4);
+}
+
+void loop() {
+  timer.update();
+}
+
+void setup() {
+  Serial.begin(9600);
+  timer.every(1000,sendLum);
+  timer.every(1000,sendTemperature);
+}
+\end{scalacode}
+  \caption[Arduino code for a simple data recovering]{}
+  \label{lst:arduino_generalisation}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+\begin{scalacode}
+#include <mbed.h>
+
+Ticker ticker;
+
+Serial pc(USBTX, USBRX);
+
+AnalogIn rawTemp(PC_1);
+AnalogIn lum(PC_3);
+
+ // Transform tf
+float tf (int x){
+  int B = 3975;
+  float resistance = ((((float)(1023 - x)) * 1000) / x);
+  float temperature = ((1 / ((log((resistance / 1000)) / B) + (1 / 298.15))) - 273.15);
+  return temperature;
+}
+
+void sendLum(){
+  float data = lum.read();
+  uint8_t * b = (uint8_t *) &data;
+  unsigned int size = 0;
+  while(size < sizeof(b)) {
+      pc.putc(b[size++]);
+  }
+}
+
+void sendTemperature(){
+  float data = rawTemp.read();
+  uint8_t * b = (uint8_t *) &data;
+  unsigned int size = 0;
+  while(size < sizeof(b)) {
+    pc.putc(b[size++]);
+  }
+}
+
+int main(void) {
+  pc.baud(4800);
+  ticker.attach(&sendLum,1.0);
+  ticker.attach(&sendTemperature,1.0);
+  while(1);
+  return 0;
+}
+\end{scalacode}
+  \caption[Mbed code for a simple data recovering]{}
+  \label{lst:mbed_generalisation}
+\end{figure}
+
+The two code \ref{lst:arduino_generalisation} and \ref{lst:mbed_generalisation}
+are very close to each other. We can recognize some key elements :
+
+\textbf{An input} is represented by all the element necessary to recover the
+data from a sensor through specific pin. For Arduino, it's the code
+\arduinoinline{analogRead(pinId)} which provides the data from the sensor. For
+Mbed, it's the object \cppinline{AnalogIn} with the method \cppinline{read()}.
+An input could be represented as a function $f : () \rightarrow A$, were $A$ is
+the type of the data we get when using the input.
+
+\textbf{The sampling} indicates, in the software level, when the device need
+to recover the sensor data. The main two kind of sampling is the sampling by
+update and the sampling by frequences. The sampling by update is presented in
+listing \ref{lst:arduino_sampling_update}, the device send the data only if she has
+change. The sampling by frequences, showed in listing
+\ref{lst:arduino_sampling_frequences}, the device send the data on each
+specified interval.
+
+\begin{figure}[ht]
+  \centering
+\begin{scalacode}
+void setup(){
+  timer.every(1000,byFrequences);
+}
+
+void byFrequences(){
+  // Get data
+  float data = tf(analogRead(1));
+  // As a byte array...
+  byte * b = (byte *) &data;
+  // Send data
+  Serial.write(b,4);
+}
+\end{scalacode}
+  \caption[Sampling by frequences implemented with an Arduino]{Sampling by update
+    implemented with an Arduino. The device send the value in each time interval.}
+  \label{lst:arduino_sampling_update}
+\end{figure}
+
+\begin{figure}[ht]
+  \centering
+\begin{scalacode}
+void setup(){
+  timer.every(1000,serial_lum);
+}
+
+void byUpdate(){
+  // Get data
+  float data = tf(tf(analogRead(1)));
+  if(data != last_serial_temp2) {
+    // As a byte array...
+    byte * b = (byte *) &data;
+    // Send data
+    Serial.write(b,4);
+  }
+  last_serial_temp2 = data;
+}
+\end{scalacode}
+  \caption[Sampling by update implemented with an Arduino]{Sampling by update
+    implemented with an Arduino. Before sending the value, we test if she
+    changes or not.}
+  \label{lst:arduino_sampling_frequences}
+\end{figure}
+
+\textbf{A transformation} is a function $f : A \rightarrow B$ whith an input
+and an output. A transformation is independent from the languages or framework,
+the only important part of a transformation is his semantic. Depending on the
+language, a transformation is not implemented in the same way but owns the same
+properties. This concept gives the opportunity to design an higher level
+language and then compile it into an embedded one.
+
+Antother important types in our domain specification is the \textbf{device}. A
+device is the hardware in which we are goint to run the previous elements
+(inputs, transformations, and so on...). The device depends on the hardware and
+the software, sometimes he comes with a framework like mention
+in \ref{sec:framework_for_embeded_dev}.
+
+\section{Multiple Domain Specific Languages}
+\label{sec:multiple_dsl}
+
+According to \ref{sec:design_domain_of_interest} and
+\ref{sec:design_domain_of_interest}, we are goint to cluster the acquired
+knowledge in a handful of semantic notions with operations on them and construct
+a library with a language that implements those notions
+\cite{little_languages_little_maintenance}.
+
+From the user point of view, we want to describe several devices who gathered
+inputs, apply some transformations and send them through a network with a
+specific sampling. Those notions are translated into the following operations :
+
+\begin{itemize}
+\item Create a devices.
+\item Link some inputs with a device.
+\item Create a transformation function.
+\item Link an input with a transformation.
+\item Send an input trough a network with a sampling.
+\item Specify the sampling kind.
+\end{itemize}
+
+The problem is that we can't specify everything with an unique \gls{DSL}. The
+transformation implementation is not part of the devices and inputs
+specifications. That's why we would have multiple \gls{DSL} in our ecosystem.
+For example, if we want to add a way to specify the storage and the
+visualisation of the gathered datas, doing it inside the declaraive \gls{DSL}
+could create some inconsistency and behavior misunderstanding.
+
+\section{Design of the APDL's Domain Specific Languages}
+\label{sec_design_apdl_dsls}
+
+The listing \ref{lst:apdlcode_all} is showing all the concepts from
+\ref{sec:multiple_dsl}.
+
+\begin{figure}[ht]
+  \centering
+\begin{apdlcode}
+@device arduino1 {
+    id = uno
+    framework = arduino
+    @input rawTemp analogInput 1
+    @input lum analogInput 0
+    @input temp tf rawTemp
+    @serial lum each 1 s
+    @serial temp update
+}
+\end{apdlcode}
+  \caption[]{}
+  \label{lst:apdlcode_all}
+\end{figure}
+
+\subsection{The APDL-Transform Domain Specific Language}
+\label{subsec:transformation_dsl}
+
+\subsection{The APDL-Main Domain Specific Language}
+\label{subsec:apdl_main_dsl}
+
+\subsection{Extending the user possibilities}
+\label{subsec:extending_user_possibilities}
+
+\section{Summary}
+\label{sec:design_summary}
 
 %%% Local Variables:
 %%% mode: latex

@@ -8,6 +8,7 @@ add_cus_dep( "acn", "acr", 0, "makeglossaries" );
 push @generated_exts, "glo", "gls", "glg";
 push @generated_exts, "acn", "acr", "alg";
 
-$latex = 'texfot latex -interaction=nonstopmode -shell-escape';
-$pdflatex = 'texfot pdflatex -interaction=nonstopmode -shell-escape';
-$clean_ext = "bbl glo lol ist run.xml synctex.gz _minted-thesis auto"
+$latex = 'texfot latex -interaction=nonstopmode -file-line-error -shell-escape';
+$pdflatex = 'texfot xelatex -interaction=nonstopmode -file-line-error -shell-escape';
+$clean_ext = "bbl glo lol ist run.xml synctex.gz";
+$bibtex_use = 1;

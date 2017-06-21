@@ -34,6 +34,9 @@
 
 \RequirePackage{parskip}
 
+\RequirePackage{float}
+\RequirePackage{scrextend}
+
 \RequirePackage{csquotes}
 
 \RequirePackage{glossaries}
@@ -99,7 +102,9 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \newmintinline{cpp}{breaklines=true,fontsize=\small}
 
 % Apdl
-\newminted[apdlcode]{scala}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
+\newminted[apdlcode]{python}{frame=single, framesep=6pt, breaklines=true,
+  fontsize=\scriptsize}
+\newmintinline[apdlinline]{python}{fontsize=\small}
 
 \setlength{\headheight}{17pt}
 \pagestyle{fancy}

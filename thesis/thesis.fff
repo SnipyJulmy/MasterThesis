@@ -1,0 +1,12 @@
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\textwidth]{img/compilation_process}
+  \caption[APDL compilation process]{The APDL compilation process, the source
+    code is parsed into a first \gls{AST} before transformed into a second one
+    and a symbol table by the semantic analyzer. Then, the code generator use
+    the \gls{AST} and the symbol table to generate a raw platform specific
+    source code. Finally, a code formater like Astyle\cite{TalDavidson}.}
+  \label{fig:apdl_compilation_process}
+\end{figure}
+\efloatseparator
+ 

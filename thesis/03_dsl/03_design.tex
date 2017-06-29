@@ -7,20 +7,19 @@
 This chapter will present the design of the \gls{APDL} \gls{DSL}. Firstly, we
 set out the domain of interest and some kind of a generalisation for the embedded
 code we produce. The domain of interest regroup all the relevant information
-related to the \gls{DSL} we create. This chapter will present some general part
+related to the \gls{DSL} we create. This chapter will present some general parts
 of the embedded systems we want to generate. As a reminder, we want to generate
 the code for some devices that are going to recover some data through
 sensors, apply transformation on it and send them through a communication network
 like a serial port.
 
-The second part is about the fragmentation of \gls{APDL}. We are going to the
-present why \gls{APDL} is fragmented in multiple \gls{DSL} or language and explain
+The second part is about the fragmentation of \gls{APDL}. We are going to
+present why \gls{APDL} is fragmented into multiple \gls{DSL} or languages and explain
 the advantages and disadvantages of this method. We would also introduce the
 PlatformIO build systems for embedded devices.
 
 Finally, we present the final chosen design of the \gls{APDL} \gls{DSL} and the
-explanation on the choice of making an external \gls{DSL} instead of another
-one.
+explanation on the choice of making an external \gls{DSL}.
 
 \section{Domain of interest}
 \label{sec:design_domain_of_interest}
@@ -36,11 +35,11 @@ recommendation is to follow the next seven points\cite{little_languages_little_m
 \item Construct a library that implements the semantic notions.
 \item Design a DSL that concisely describes applications in the domain.
 \item Design and implement a compiler that translates DSL programs to a sequence of library calls.
-\item Write DSL programs for all desired applications and compile them. The
+\item Write DSL programs for all desired applications and compile them.
 \end{itemize}
 
-The point ``Identify problem domain of interest'' as been treated in chapter
-\ref{cha:iot_challenge}. Now, we will gather the relevant information on our
+The point ``Identify problem domain of interest'' is treated in chapter
+\ref{cha:iot_challenge}. In the next section, we will gather the relevant information on our
 specific domain.
 
 \section{Generalisation of the Embedded Framework}
@@ -48,7 +47,7 @@ specific domain.
 
 ``What do we want ?''
 
-That’s the first questions to ask when we start analysing the domain’s problems.
+That's the first questions to ask when we start analysing the domain's problems.
 As an answer, we suggest the following :
 
 { \Large \textit{``We want to simply design a system, depending on a specific
@@ -56,8 +55,8 @@ As an answer, we suggest the following :
     send them through a network.''}
 }
 
-Note that the previous sentence doesn’t care about what’s happening to the
-transferred data. Including handling, storage and visualisation. This part is
+Note that the previous sentence doesn't care about what's happening to the
+transferred data, including handling, storage and visualisation. This part is
 treated in chapter \ref{chap:apdl_ecosystem}.
 
 We are going to take two examples, one with the Arduino Framework and one with
@@ -114,7 +113,7 @@ void setup() {
 \end{scalacode}
   \caption[Arduino code for a simple data recovering]{Implementation of a simple
 data recovering device with the Arduino Framework. The sampling is achieved
-using a Timer and callbacks. The callback’s methods are sending the data through a
+using a Timer and callbacks. The callback's methods are sending the data through a
 serial network.}
   \label{lst:arduino_generalisation}
 \end{listing}
@@ -167,7 +166,7 @@ int main(void) {
 \end{scalacode}
   \caption[Mbed code for a simple data recovering]{Implementation of a simple
 data recovering device with the Mbed Framework. The sampling is achieved
-using a Ticker and callbacks. The callback’s methods are sending the data through a
+using a Ticker and callbacks. The callback's methods are sending the data through a
 serial network.}
   \label{lst:mbed_generalisation}
 \end{listing}
@@ -176,21 +175,21 @@ The two codes \ref{lst:arduino_generalisation} and \ref{lst:mbed_generalisation}
 are very close to each other. We can recognise some key elements :
 
 \textbf{An input} is represented by all the elements necessary to recover the
-data from a sensor through specific pin. For Arduino, it’s the code
+data from a sensor through specific pin. For Arduino, it's the code
 \arduinoinline{analogRead(pinId)} which provides the data from the sensor. For
-Mbed, it’s the object \cppinline{AnalogIn} with the method \cppinline{read()}.
+Mbed, it's the object \cppinline{AnalogIn} with the method \cppinline{read()}.
 An input could be represented as a function $f : () \rightarrow A$where $A$ is
 the type of the data we get when using the input.
 
 \textbf{The sampling} indicates, in the software level, when the device needs
-to recover the sensor data. The two main kinds of sampling are sampling by
+to recover the sensor data. The two main kinds of sampling are by
 update and by frequencies. The sampling by update is presented in
-listing \ref{lst:arduino_sampling_update}, the device sends the data only if she has
-changed. The sampling by frequencies showed in listing
+listing \ref{lst:arduino_sampling_update}, the device sends the data only if it has
+changed. In the sampling by frequencies showed in listing
 \ref{lst:arduino_sampling_frequences}, the device sends the data on each
 specified interval.
 
-\begin{listing}[H]
+\begin{listing}[H]<
   \centering
 \begin{scalacode}
 void setup(){
@@ -231,40 +230,38 @@ void byUpdate(){
 }
 \end{scalacode}
   \caption[Sampling by update implemented with an Arduino]{Sampling by update
-    implemented with an Arduino. Before sending the value, we test if she
+    implemented with an Arduino. Before sending the value, we test if it
     changes or not.}
   \label{lst:arduino_sampling_frequences}
 \end{listing}
 
 \textbf{A transformation} is a function $f : A \rightarrow B$ with an input
-and an output. A transformation is independent from the languages or framework,
-the only important part of a transformation is his semantic. Depending on the
+and an output, and is independent from the languages or framework.
+The only important part of a transformation is its semantic. Depending on the
 language, a transformation is not implemented in the same way but owns the same
 properties. This concept gives the opportunity to design a higher level
 language and then compile it into an embedded one.
 
-Another important types in our domain specification is the \textbf{device}. A
-device is the hardware in which we are going to run the previous elements
+A \textbf{device} is the hardware in which we are going to run the previous elements
 (inputs, transformations, and so on…). The device depends on the hardware and
-the software, sometimes he comes with a framework like mention
+the software, sometimes it comes with a framework like mentioned
 in \ref{sec:framework_for_embeded_dev}.
 
 The last generalisation we made is called the ``Acquire and Process lifecycle''.
 The lifecycle is represented by two steps in the life of an embedded device : the
 setup and the loop. The setup is the first operations made by the device, like
-configuration, calibration, and so on… The loop is the set of operations
+configuration, calibration, and so on. The loop is the set of operations
 executed in order indefinitely until we stop the device.
 
 \section{Multiple Domain Specific Languages}
 \label{sec:multiple_dsl}
 
-According to \ref{sec:design_domain_of_interest} and
-\ref{sec:design_domain_of_interest}, we are going to cluster the acquired
+According to \ref{sec:design_domain_of_interest}, we are going to cluster the acquired
 knowledge in a handful of semantic notions with operations on them and construct
 a library with a language that implements those notions
 \cite{little_languages_little_maintenance}.
 
-From the user’s point of view, we want to describe several devices who gathered
+From the user's point of view, we want to describe several devices who gathered
 inputs, apply some transformations and send them through a network with a
 specific sampling. Those notions are translated into the following operations :
 
@@ -277,9 +274,9 @@ specific sampling. Those notions are translated into the following operations :
 \item Specify the sampling kind.
 \end{itemize}
 
-The problem is that we can’t specify everything with a unique \gls{DSL}. The
-transformation implementation is not part of the devices and input
-specifications. That’s why we would have multiple \gls{DSL} in our ecosystem.
+The problem is that we can't specify everything with a unique \gls{DSL}. The
+transformation's implementation is not part of the devices and input
+specifications. That's why we would have multiple \gls{DSL} in our ecosystem.
 For example, if we want to add a way to specify the storage and the
 visualisation of the gathered data, doing it inside the declarative \gls{DSL}
 could create some inconsistency and behaviour misunderstanding.
@@ -291,7 +288,7 @@ PlatformIO\cite{Ivan2017} is an open source ecosystem for IoT development. It
 provides a cross-platform IDE and unified debuggers with remote unit testing and
 firmware update\cite{Ivan2017}.
 
-Such a build system is incredible for the kind of project we are doing with
+Such a build system is made for the kind of project we are doing with
 \gls{APDL}. Each board supported by the PlatformIO is represented by a unique
 identifier and the build systems provide an automatic downloading of libraries
 and dependencies through a configuration file.
@@ -299,7 +296,7 @@ and dependencies through a configuration file.
 PlatformIO is used as a back end for \gls{APDL}, so only the PlatformIO
 supported boards are available with \gls{APDL}.
 
-\section{Design of the APDL’s Domain Specific Languages}
+\section{Design of the APDL's Domain Specific Languages}
 \label{sec:design_apdl_dsls}
 
 The goal of \gls{APDL} is to provide a simple way of declaring sensors oriented
@@ -340,24 +337,24 @@ corresponding APDL code too :
   PlatformIO id of the boards\cite{Ivan2017}.
 \item A key-value pair, named \apdlinline{framework}, which is corresponding to
   the development framework of the board, also available on PlatformIO\cite{Ivan2017}.
-\item Some inputs, each is specified with an identifier, the type of the input
+\item Some inputs, each one specified with an identifier, the type of the input
   and the arguments for the type.
-\item Some serial , each is specified with an identifier and the sampling method
+\item Some serial, each one specified with an identifier and the sampling method
   and values.
 \end{itemize}
 
 \section{The APDL-Transform Domain Specific Language}
 \label{sec:transformation_dsl}
 
-The \gls{TF} language another \gls{DSL} whose goal is to provide a high-level way of
-coding a transformation. As explain in \ref{sec:generalisation_framework}, the
+The \gls{TF} language is another \gls{DSL} whose goal is to provide a high-level way of
+coding a transformation. As explained in \ref{sec:generalisation_framework}, the
 advantage to design a high-level language for transformation is the capability
-of using a simple language and then compile it to the desired platform.
+of using a simple language and then to compile it to the desired platform.
 
 The syntax of the \gls{TF} is quite similar to Scala and gives the traditional
 concept for the user. The listing \ref{lst:tf-example} shows an example of a
 transformation. This transformation is used to convert the resistance of the
-sensor into the temperature.
+sensor in Celsius.
 
 \begin{listing}[H]
   \centering
@@ -372,7 +369,7 @@ sensor into the temperature.
   \caption[APDL transformation implement with the \gls{TF}
   language]{Implementation of a transformation function using the \gls{TF}
     language. The syntax is quite similar to Scala and gives the opportunity to
-    write high levels code for embedded platform.}
+    write a high level code for embedded platform.}
   \label{lst:tf-example}
 \end{listing}
 
@@ -381,16 +378,16 @@ language and extends it as much as we want. For the moment, the language offers
 the following concept :
 
 \begin{itemize}
-\item Addition, subtraction, multiplication and division
-\item C-like type casting
-\item Variable and constant declaration
-\item Array creating and access
-\item Function definition and call
-\item Boolean expression
-\item Comparison operator
-\item Loops
-\item Flow-control structure : If-then-else, return, break and continue
-\item C-like type hierarchy
+\item Addition, subtraction, multiplication and division.
+\item C-like type casting.
+\item Variable and constant declarations.
+\item Array creating and access.
+\item Function definition and call.
+\item Boolean expression.
+\item Comparison operators.
+\item Loops.
+\item Flow-control structure : If-then-else, return, break and continue.
+\item C-like type hierarchy.
 \end{itemize}
 
 Basically, all the implementation who comes after \apdlinline{@define transform}
@@ -402,23 +399,23 @@ language is available in appendix \ref{app:tf-getting-started}.
 
 In the section~\ref{sec:transformation_dsl} we introduce the keyword
 \apdlinline{@define}. This keyword provides to the user the possibility to define
-a new entity when he is designing a \gls{APDL} project. It exists three different
-possible kind of definition the user can create : transformations, inputs and
+a new entity when designing a \gls{APDL} project. It exists three different
+possible kinds of definitions the user can create : transformations, inputs and
 components. We already saw the transformation definition in
-sections~\ref{sec:transformation_dsl}.
+section~\ref{sec:transformation_dsl}.
 
 \subsection{Defining New Inputs}
 \label{sec:defining_new_input}
 
 An input entity represents the way to recover the sensor information on a
-device. As an example, we would take the \apdlinline{analogInput} seen in
+device. For example, we would take the \apdlinline{analogInput} seen in
 listing \ref{lst:apdlcode_all}. An analogical input is present on a lot of
 platforms. For our example, we would take in consideration only the Arduino
 platform\cite{ArduinoSoftware2017} and the Mbed platform\cite{ARMmbed}.
 
-The analogical input is present in both framework, but his implementation and
+The analogical input is present in both frameworks, but its implementation and
 usage for the user are quite different in both. In order to cover all kinds of
-implementation for an input concept, we need to provide a general way to define
+implementations for an input concept, we need to provide a general way to define
 inputs. Such a way is shown in listing \ref{lst:define_analoginput}.
 
 \begin{listing}[H]
@@ -442,7 +439,7 @@ inputs. Such a way is shown in listing \ref{lst:define_analoginput}.
 }
 \end{apdlcode}
   \caption[Definition of an analogical input using \gls{APDL}]{Definition of an
-analogical input using \gls{APDL}. The generic part for any kind of framework is
+analogical input using \gls{APDL}. The generic part for any kind of frameworks is
 present between the ``input'' identifier and the opening brackets. We could
 define the identifier for the input and some arguments. Then we could write any
 code that would be generated for the specified platform at the compile time.}
@@ -457,7 +454,7 @@ implementation, we are bound to those concepts as shown in listings
 \ref{lst:gen_expr_syntax_arduino} and \ref{lst:gen_expr_syntax_mbed}.
 
 The ``setup'' and ``loop'' values are corresponding to their eponym discussed in
-the section~\ref{sec:generalisation_framework}, the ``global'' value what all the
+the section~\ref{sec:generalisation_framework}, the ``global'' value represents what all the
 users want to put in the global scope, like global variables, function
 definitions or constant. Finally, the ``expr'' and ``type'' values indicate to the compile how
 to recover the input value and his type.
@@ -510,7 +507,7 @@ the input definition for Arduino.}
 \end{listing}
 
 The strings present in the values for the \apdlinline{@gen} definition are kind
-of interpolated string and has access to the parameters through the macro
+of interpolated strings and have access to the parameters through the macro
 \apdlinline{@parameterIdentifier}. \gls{APDL} also provides the macro
 \apdlinline{@id} which is a unique identifier generated by the compiler.
 
@@ -537,12 +534,12 @@ int main(void){
 definition for the Mbed framework. All we do is just replacing the arguments
 for the definition and then generate the code at the specified points showed
 in listing \ref{lst:gen_expr_syntax_arduino}. We admit that the ``pin''
-parameter value is equal too $1$. The \apdlinline{@id} value is generated by the
+parameter value is equal to $1$. The \apdlinline{@id} value is generated by the
 compiler.}
   \label{lst:analogInput_result_example}
 \end{listing}
 
-By using this kind of definition and generation, we can write almost any inputs
+By using this kind of definition and generation, we can write any kind of inputs
 on any platform. By offering a general description for the generation, the user
 could also define some inputs that require a library. In this case, the user can include
 the library by using the global value.
@@ -550,7 +547,7 @@ the library by using the global value.
 \subsection{Defining New Components}
 \label{sec:defining_component}
 
-We could go further than the input’s definition mechanism by offering to the
+We could go further than the input's definition mechanism by offering to the
 user the possibility to define components. A component could be seen has a
 black box, with some inputs and an output. An example of a component design with
 \gls{APDL} is shown in listing \ref{lst:apdlcode_component_example}.
@@ -576,16 +573,16 @@ black box, with some inputs and an output. An example of a component design with
 }
 \end{apdlcode}
   \caption[Definition of a component with \gls{APDL}]{Definition of a component
-with \gls{APDL}. A component’s definition is quite similar to an input
+with \gls{APDL}. A component's definition is quite similar to an input
 definition except that the output type is not depending on the framework. A
 component definition is kind of a macro system for \gls{APDL}. Another
-difference is the generation, an input is used only for recovering the input and
+difference is the generation. An input is used only for recovering the input and
 a component is generated as a function.}
   \label{lst:apdlcode_component_example}
 \end{listing}
 
 At the generation time, a component is described as a function $f :
-(A_0,A_1,...A_n) \rightarrow B$ where $A_0,...,A_n$ ,are the parameter’s types of
+(A_0,A_1,...A_n) \rightarrow B$ where $A_0,...,A_n$ ,are the parameter's types of
 the functions and $B$ is the return type.
 
 Using a component is almost the same as using an input. We just have to
@@ -594,7 +591,7 @@ The arguments are, in order, the device parameters and then the input parameters
 
 \apdlinline{@input componentOutput simpleOperator + input1 input2}
 
-The generated code is shown in listing 
+The generated code is shown in listing \ref{lst:component_generated}.
 
 When we use this implementation and the definition of the component defined in
 listing \ref{lst:apdlcode_component_example}, we obtain the code from listing
@@ -608,33 +605,33 @@ int component_simpleOperator_tempLum(int x,int y) {
   return x + y;
 }
 \end{cppcode}
-  \caption[Generated code for an \gls{APDL}’s component]{Generated code from the
-component define in listing \ref{lst:apdlcode_component_example}. A component is
-represented as a function, and he is parameterised with his arguments.}
+  \caption[Generated code for an \gls{APDL}'s component]{Generated code from the
+component defined in listing \ref{lst:apdlcode_component_example}. A component is
+represented as a function, and it is parameterised with its arguments.}
   \label{lst:component_generated}
 \end{listing}
 
 \section{Summary}
 \label{sec:design_summary}
 
-In this chapter, we have presented the design process and choices of the multiple
-\gls{APDL}’s \gls{DSL}s. We set out the \gls{APDL}’s domain of interest by
+In this chapter, we have presented the design process and choices on the multiple
+\gls{APDL}'s \gls{DSL}s. We set out the \gls{APDL}'s domain of interest by
 introducing the development process of a \gls{DSL} by
 \cite{little_languages_little_maintenance}. Then we suggest a
-generalisation~\ref{sec:generalisation_framework} for any sensor-oriented
-projects independently a platform by introducing the concept of : input, devices,
+generalisation in section~\ref{sec:generalisation_framework} for any sensor-oriented
+projects, independently from any platform, by introducing the concept of : input, devices,
 transformation, sampling and the \gls{APDL} lifecycle with the steps called
 ``setup'' and ``loop''.
 
-After, we discover why we need multiple \gls{DSL} for \gls{APDL} and argue that
-implements everything with a single \gls{DSL} could create some inconsistency
-and behaviour misunderstanding~\ref{sec:multiple_dsl}.
+After, we discovered in section~\ref{sec:multiple_dsl} why we need multiple \gls{DSL} for \gls{APDL} and argued that
+implementing everything with a single \gls{DSL} could create some inconsistency
+and behaviour misunderstanding.
 
 Finally, we set out the design of all the \gls{DSL} and concepts created with
-\gls{APDL} : the \gls{APDL} \gls{DSL}~\ref{sec_design_apdl_dsls}, the \gls{TF}
+\gls{APDL} : the \gls{APDL} \gls{DSL}, the \gls{TF}
 language for transformation and the possibility of defining new
-inputs~\ref{sec:defining_new_input} and new
-components~\ref{sec:defining_component}.
+inputs in section~\ref{sec:defining_new_input} and new
+components in section~\ref{sec:defining_component}.
 
 %%% Local Variables:
 %%% mode: latex

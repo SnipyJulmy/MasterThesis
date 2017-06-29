@@ -1,0 +1,524 @@
+\newChapter{Validation and Results}{chap:dsl_validation}
+
+\section{Introduction}
+\label{sec:validation_intro}
+
+This part will present the tests, and results obtained with \gls{APDL}. We will
+introduce a technique called property-based testing, in which we don't care
+about the inputs of the test, but about the properties of an entity. Then, we
+will introduce the implementation of the inputs generators for the tests
+execution.
+
+Afterwards, we will talk about the validation of \gls{APDL} towards the other
+\gls{DSL} mentioned in chapter \ref{cha:iot_challenge}. We will also indicate why
+it is hard to validate a \gls{DSL} in specific area.
+
+Finally, we are going to discuss about the novelties suggested by \gls{APDL} like
+as the generalisation of the frameworks for embedded development.
+
+\section{Testing the parser}
+\label{sec:testing_the_parser}
+
+A big part of testing is the generation of concrete inputs. It's almost
+impossible for a single human to create any kind of possible inputs for a parser.
+That's why, for the project purpose, we are using a technique called
+property-based testing.
+
+Property-based testing is a kind of testing that allows the user to specify
+assertions about logical properties which a test function should fulfil. In our case,
+what the \gls{APDL} parser should parse and what it should not parse.
+
+ScalaCheck~\cite{RickardNilsson} is a library that offers property-based testing
+and also allows the user to create his own generators. For \gls{APDL}, we have
+created a set of generators, which are capable of creating any kind of possible
+valid \gls{APDL} projects. The full implementation of those generators is
+available in appendix \ref{app:generators_property_based_testing}.
+
+We will just take an example in order to understand what we have done to test
+the parser. The following generator is able to generate an expression for the
+\gls{TF} language :
+
+\begin{inlinescala}
+def genExpr: Gen[Expr] = genExprInner(maxExprSize)
+
+private def genExprInner(depth: Int): Gen[Expr] = {
+  if (depth == 0) genExprTerminal
+  else {
+    val nextDepth = depth - 1
+    Gen.oneOf(
+      genAdd(nextDepth),genMul(nextDepth),genDiv(nextDepth),
+      genSub(nextDepth),genCast(nextDepth),genOr(nextDepth),
+      genAdd(nextDepth),genNot(nextDepth),
+      genSmaller(nextDepth),genSmallerEquals(nextDepth),
+      genEquals(nextDepth),genNotEquals(nextDepth),
+      genGreater(nextDepth),genGreaterEquals(nextDepth),
+      genFunctionCall(nextDepth),genSymbol,
+      genLiteral,genTrue,genFalse
+    )
+  }
+}
+\end{inlinescala}
+
+In order to prevent the framework of generating huge expression which would cause
+stack overflow, we use a parameter to indicate the maximal depth for
+expression.
+
+All of the functions contained in the \scalainline{Gen.oneOf} methods are
+generators too and are mostly the same as
+
+\begin{inlinescala}
+def genAdd(depth: Int): Gen[Add] =
+    for {
+      e1 <- genExprInner(depth)
+      e2 <- genExprInner(depth)
+    } yield Add(e1, e2)
+\end{inlinescala}
+
+Once the generators are defined, we can implement a code generator that is
+producing \gls{APDL} source code. The generated code allows us to parse it with
+the \gls{APDL} parser and finally, we test if the two resulting \gls{AST} are equals.
+The code generator for \gls{APDL} is available in appendix
+\ref{app:apdl_code_generator_for_test}.
+
+When we have both of those components, we could write tests about logical
+assertion. Listing \ref{lst:test_expr} shows a property which asserts that any
+generated expression has to be equal to the parsed, and generated code.
+
+\begin{listing}[H]
+  \centering
+\begin{scalacode}
+behavior of "The TransformApdlParser parser"
+
+it should "correctly parse any well formed expr" in {
+  val gen = new ApdlExprGenerators(5)
+  val codeGen: TransformApdlBackendGenerators = new TransformApdlBackendGenerators {}
+
+  check {
+    forAll(gen.genExpr) { e =>
+      val code = codeGen.toApdlCode(e)
+      val ast = parse(code,tfExpr)
+      ast == e
+    }
+  }
+}
+\end{scalacode}
+  \caption[Property testing of an \gls{APDL} expression]{Property of an
+\gls{APDL} expression. We assert that for all generated expressions, both of the
+\gls{AST} have to be equal.}
+  \label{lst:test_expr}
+\end{listing}
+
+We can't assume that our parser is correct even with those tests. It's possible
+that we have made the same error twice, so the test will pass but the parser
+isn't correct.
+
+We could mention that a test has been created for the preprocessor. \gls{APDL} allows
+the user to separate his projects into multiple files and use the
+\scalainline{@include} keyword in a C style. The include commands are just
+replaced by the contents of the specified file. The implementation of this test
+is available in appendix \ref{app:includes_tests}.
+
+\section{Testing the Code Generation}
+\label{sec:testing_code_generation}
+
+Testing the code generation is harder than testing the parser and
+consumes much more time. Because we generate the code for different platforms,
+we have to write many tests cases, and we can't use the
+generators discussed in section \ref{sec:testing_the_parser}. We don't have a
+parser for C source code that can create an \gls{APDL} \gls{AST}.
+
+The only test we can make without consuming too much time is to write some
+\gls{APDL} source code, generate it and assert that the generated code is
+working on the expected goal. The sections~\ref{subsec:test_A}
+to~\ref{subsec:test_C} present various APDL source codes and their corresponding
+generated outputs, each test indicates if the semantics of the APDL source is
+respected in the output. Each output has been runned on the specified device
+and the semantics is respected.
+
+\subsection{Test A}
+\label{subsec:test_A}
+
+\subsubsection*{Input}
+\begin{apdlcode}
+@device A {
+    id = uno
+    framework = arduino
+    @input t analogInput 1
+    @serial t update
+}
+\end{apdlcode}
+
+\subsubsection*{Output}
+\begin{arduinocode}
+#include "Timer.h"
+
+Timer t;
+
+int last_serial_t;
+
+void serial_t() {
+    // Get data
+    int data = analogRead(1);
+
+    if(data != last_serial_t) {
+        char buffer[1024];
+        sprintf(buffer,"t : %d", (int)data);
+        //sprintf(buffer,"t : %d", data);
+        Serial.println(buffer);
+    }
+    last_serial_t = data;
+}
+
+void loop(){
+    t.update();
+}
+
+void setup() {
+    Serial.begin(9600);
+    last_serial_t = analogRead(1);
+    t.every(1000,serial_t);
+}
+\end{arduinocode}
+
+\paragraph*{Semantic is respected : yes}
+\newpage
+
+\subsection{Test B}
+\label{subsec:test_B}
+
+\subsubsection*{Input}
+\begin{apdlcode}
+@device B {
+    id = disco_f429zi
+    framework = mbed
+    @input t analogInput 1
+    @input t1 tf t
+    @input t2 tf t
+    @serial t2 each 2 s
+}
+
+@define transform def tf (x:int) -> float {
+    val B : int = 3975
+    val resistance : float = (float)(1023 - x) * 1000 / x
+    val temperature : float = 1 / (log(resistance/1000) / B + 1 / 298.15) - 273.15
+    return temperature
+}
+\end{apdlcode}
+
+\subsubsection*{Output}
+\begin{cppcode}
+#include <mbed.h>
+
+Ticker ticker;
+
+Serial pc(USBTX, USBRX);
+
+AnalogIn temp_2(1);
+
+float tf (int x) {
+    int B = 3975;
+    float resistance = ((((float)(1023 - x)) * 1000) / x);
+    float temperature = ((1 / ((log((resistance / 1000)) / B) + (1 / 298.15))) - 273.15);
+    return temperature;
+}
+
+void serial_t2() {
+    // Get data
+    float data = tf(temp_2.read());
+    pc.printf("t2 : %f",data);
+}
+
+int main(void) {
+    pc.baud(9600);
+    // Setup
+    ticker.attach(&serial_t2,2.0);
+
+    // Loop
+    while(1) {
+    }
+
+    return 0;
+}
+\end{cppcode}
+
+\paragraph*{Semantic is respected : yes}
+\newpage
+
+\subsection{Test C}
+\label{subsec:test_C}
+
+\subsubsection*{Input}
+\begin{apdlcode}
+@device arduino1 {
+    id = uno
+    framework = arduino
+    @input rawTemp analogInput 1
+    @input lum analogInput 0
+    @input temp tf rawTemp
+    @input temp2 tf temp
+    @input lumTemp simpleOperator + lum temp
+    @input tempLum simpleOperator - temp lum
+    @input lc loopCounter
+    @serial lum each 1 s
+    @serial temp each 1 s
+    @serial temp2 update
+    @serial lumTemp update
+    @serial lc update
+}
+
+@define transform def tf (x:int) -> float {
+    val B : int = 3975
+    val resistance : float = (float)(1023 - x) * 1000 / x
+    val temperature : float = 1 / (log(resistance/1000) / B + 1 / 298.15) - 273.15
+    return temperature
+}
+
+@define component simpleOperator op:str {
+    @in x:int y:int
+    @out int
+    @gen mbed {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "@x @op @y"
+    }
+    @gen arduino {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "@x @op @y"
+    }
+}
+
+@define component loopCounter {
+    @in
+    @out int
+    @gen arduino {
+        global = "int a;"
+        setup = "a = 0;"
+        loop = "a = a + 1;"
+        expr = "a"
+  }
+}
+\end{apdlcode}
+\newpage
+
+\subsubsection*{Output}
+\begin{arduinocode}
+#include "Timer.h"
+
+Timer t;
+
+int a;
+float last_serial_temp2;
+int last_serial_lumTemp;
+int last_serial_lc;
+
+// Transform tf
+float tf (int x) {
+    int B = 3975;
+    float resistance = ((((float)(1023 - x)) * 1000) / x);
+    float temperature = ((1 / ((log((resistance / 1000)) / B) + (1 / 298.15))) - 273.15);
+    return temperature;
+}
+// End transform tf
+
+// Component simpleOperator
+int component_simpleOperator_lumTemp(int x,int y) {
+    return x + y;
+}
+// End of simpleOperator
+
+// Component simpleOperator
+int component_simpleOperator_tempLum(int x,int y) {
+    return x - y;
+}
+// End of simpleOperator
+
+// Component loopCounter
+int component_loopCounter_lc() {
+    return a;
+}
+// End of loopCounter
+
+void serial_lum() {
+    // Get data
+    int data = analogRead(0);
+    char buffer[1024];
+    sprintf(buffer,"lum : %d", (int)data);
+    //sprintf(buffer,"lum : %d", data);
+    Serial.println(buffer);
+}
+
+void serial_temp() {
+    // Get data
+    float data = tf(analogRead(1));
+    char buffer[1024];
+    sprintf(buffer,"temp : %d", (int)data);
+    //sprintf(buffer,"temp : %f", data);
+    Serial.println(buffer);
+}
+
+void serial_temp2() {
+    // Get data
+    float data = tf(tf(analogRead(1)));
+
+    if(data != last_serial_temp2) {
+        char buffer[1024];
+        sprintf(buffer,"temp2 : %d", (int)data);
+        //sprintf(buffer,"temp2 : %f", data);
+        Serial.println(buffer);
+    }
+
+    last_serial_temp2 = data;
+}
+
+void serial_lumTemp() {
+    // Get data
+    int data = component_simpleOperator_lumTemp(analogRead(0),tf(analogRead(1)));
+
+    if(data != last_serial_lumTemp) {
+        char buffer[1024];
+        sprintf(buffer,"lumTemp : %d", (int)data);
+        //sprintf(buffer,"lumTemp : %d", data);
+        Serial.println(buffer);
+    }
+
+    last_serial_lumTemp = data;
+}
+
+void serial_lc() {
+    // Get data
+    int data = component_loopCounter_lc();
+
+    if(data != last_serial_lc) {
+        char buffer[1024];
+        sprintf(buffer,"lc : %d", (int)data);
+        //sprintf(buffer,"lc : %d", data);
+        Serial.println(buffer);
+    }
+
+    last_serial_lc = data;
+}
+
+void loop() {
+    t.update();
+    a = a + 1;
+}
+
+void setup() {
+    Serial.begin(9600);
+    a = 0
+        t.every(1000,serial_lum);
+    t.every(1000,serial_temp);
+    last_serial_temp2 = tf(tf(analogRead(1)));
+    t.every(1000,serial_temp2);
+    last_serial_lumTemp = component_simpleOperator_lumTemp(analogRead(0),tf(analogRead(1)));
+    t.every(1000,serial_lumTemp);
+    last_serial_lc = component_loopCounter_lc();
+    t.every(1000,serial_lc);
+}
+\end{arduinocode}
+
+\paragraph*{Semantic is respected : yes}
+\newpage
+
+\section{Results}
+\label{sec:results}
+
+Due to the time taken at the beginning of the project for trying to use
+\gls{LMS} in order to implement \gls{APDL}, we didn't have enough time left
+for a proper validation of the results. However, we have created multiple
+\gls{APDL} projects using the \gls{DSL} and have obtained some good results.
+
+\subsection{Code Generation}
+\label{sec:res_code_generation}
+
+The code generation is working for Arduino and for Mbed. PlatformIO's projects
+are well generated and also used for library dependencies. PlatformIO enables us
+to specify several libraries and the tool downloads them itself.
+
+The results about the code generation are also part of the testing on the same
+subject discussed in sections \ref{sec:testing_code_generation}. In order to
+obtain some verifiable results, we have to use \gls{APDL} and collect feedback.
+
+\subsection{APDL Versus the Rest of the World}
+\label{sec:apdl_vs_world}
+
+Comparing \gls{APDL} with the  \gls{DSL} analysed in
+chapter~\ref{cha:iot_challenge} isn't trivial. We haven't found a
+\gls{DSL} which is trying to do the same thing as ours. We are probably the only
+one who are working on this kind of \gls{DSL} which is targeting low-level device for
+a specific kind of work.
+
+Between all the mentioned \gls{DSL} in chapter~\ref{cha:iot_challenge},
+Node-Red\cite{node-red} is the most famous and used one. In contrast to \gls{APDL},
+Node-red is acting on a high-level entity like Twitter, Email or MQTT messages.
+There are no notions of low-level or embedded devices. Some extensions exist for
+connecting Raspberry Pi with Node-red, but that's not the priority of the developers.
+
+An idea to validate \gls{APDL} would be to create a set of
+representative projects to implement with various kinds of \gls{DSL} for
+\gls{IoT} and to compare the results. The issue with this validation is the time.
+The necessary time to find people who already know the other technologies is
+huge. In addition, as mentioned in chapter~\ref{cha:a-dsl}, the purpose of a
+\gls{DSL} is to be domain-specific. Comparing multiple \gls{DSL} with different
+purposes is probably not a good idea.
+
+The last way to validate \gls{APDL} is to use it over the time and get the
+feedback from the user in order to improve it. This brings us to one of the key
+purposes of a \gls{DSL}. The biggest advantage of developing a \gls{DSL} is also
+its biggest disadvantage : the domain-specific orientation. The domain-specific
+constraint is very painful when comes time to validate the result
+against another similar purpose product.
+
+\section{APDL Contribution to the Internet of Things}
+\label{sec:apdl_contribution}
+
+\gls{APDL} is, by far, not finish yet. A lot of work needs to be done to
+round off and improve the concept, but the foundations are here. With \gls{APDL},
+we have shown that it is possible to design a very high definition language for
+very low-level purpose. One step further, the language is purely declarative
+except for the definition of new entities. A declarative language is, in
+general, simpler to read than an imperative one.
+
+Another concept is the generalisation of the embedded devices. Conceptually,
+any \gls{IoT} device and associated framework could be generalised into an
+entity which contains the following properties:
+
+\begin{itemize}
+\item An initialisation phase, which is the set of operations executed once,
+  and called ``setup''.
+\item A repeated loop phase, which is the set of operations executed at each
+  interval of times, and called ``loop''.
+\item Some input functions or entities, which are gathering the environment
+  values into the software part.
+\item Some transformation functions, which are manipulating the input values.
+\item Some components, which contain what we can't generalise for any frameworks or devices.
+\end{itemize}
+
+Even if \gls{APDL} is not yet ready for the production, the established concept
+could bring novelty to the \gls{IoT} world. The improvement of \gls{APDL} or
+even the development of new languages, frameworks or \gls{DSL} could lead to a new
+era of progress in \gls{IoT} development.
+
+\section{Summary}
+\label{sec:summary}
+
+We have presented the validation and the results obtained with the \gls{APDL}
+\gls{DSL}. We introduced the property-based testing techniques used to validate
+the parsers. We generated random \gls{AST} which are converted into \gls{APDL}
+code, before parsed by the parser and transformed into a new \gls{AST}.
+
+Testing the code generation is a lot trickier and time consuming, a set of
+tests have been created in order to obtain some kind of a validation.
+
+Finally, we discussed about the novelties brought by \gls{APDL} into the
+\gls{IoT} field. We saw that even if \gls{APDL} is not ready for the production,
+the concept known from the development phase is relevant for the future
+development of the \gls{IoT}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../thesis"
+%%% End:

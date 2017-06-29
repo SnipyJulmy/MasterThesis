@@ -10,14 +10,14 @@
 % for bibliography
 \RequirePackage[
   backend=biber,
-  style=chem-angew,
+  style=alphabetic,
   sortlocale=en_GB,
   natbib=true,
   url=false,
   doi=true,
   eprint=false,
-  citestyle=ieee
-]{biblatex}
+  citestyle=alphabetic-verb
+  ]{biblatex}
 
 % Page style
 \RequirePackage{fancyhdr}
@@ -39,6 +39,12 @@
 
 \RequirePackage{csquotes}
 
+% Algorithm
+\RequirePackage{algorithm}
+\RequirePackage{algpseudocode}
+
+\RequirePackage[above,below,section]{placeins}
+
 \RequirePackage{glossaries}
 \makeglossaries
 
@@ -59,6 +65,7 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \let\@Date\@empty
 \let\@AuthorEmail\@empty
 \let\@Orientation\@empty
+\let\@PhoneNumber\@empty
 
 % Cross-references
 \RequirePackage{hyperref}
@@ -76,6 +83,7 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \newcommand{\Date}[1]{\gdef\@Date{#1}}
 \newcommand{\AuthorEmail}[1]{\gdef\@AuthorEmail{#1}}
 \newcommand{\Orientation}[1]{\gdef\@Orientation{#1}}
+\newcommand{\PhoneNumber}[1]{\gdef\@PhoneNumber{#1}}
 
 
 \newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
@@ -85,9 +93,13 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 
 % Scala
 \newminted{scala}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
-\newmintedfile{scala}{frame=single, framesep=6pt, breaklines=true,
+\newmintedfile{scala}{
+  frame=single,
+  framesep=6pt,
+  breaklines=true,
   fontsize=\scriptsize}
 \newmintinline{scala}{breaklines=true,fontsize=\small}
+\newminted[inlinescala]{scala}{breaklines=true,fontsize=\small}
 
 % Arduino
 \newminted{arduino}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
@@ -104,7 +116,17 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 % Apdl
 \newminted[apdlcode]{python}{frame=single, framesep=6pt, breaklines=true,
   fontsize=\scriptsize}
-\newmintinline[apdlinline]{python}{fontsize=\small}
+\newmintinline[apdlinline]{python}{fontsize=\small,breaklines=true}
+\newminted[inlineapdl]{python}{fontsize=\small,breaklines=true}
+
+% Python
+\newminted{python}{frame=single, framesep=6pt, breaklines=true, fontsize=\scriptsize}
+
+% EBNF
+\newminted{ebnf}{frame=single, framesep=6pt,
+  breaklines=true,fontsize=\scriptsize,style=bw}
+\newmintinline{ebnf}{fontsize=\small,style=bw}
+\newminted[inlineebnf]{ebnf}{fontsize=\small,style=bw}
 
 \setlength{\headheight}{17pt}
 \pagestyle{fancy}
@@ -119,7 +141,18 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 \fancyhead[EL]{\bfseries \nouppercase{\leftmark}}
 \fancyfoot[EL,OR]{\thepage}
 
-\graphicspath{{./img/}}
+% \graphicspath{{./img/}}
+
+\newcommand{\TestExpectedResult}[3]
+{
+  \begin{tabular}{|l|c|r|}
+    \hline
+    \gls{APDL} code & expected code & generated code \\
+    \hline
+    #1 & #2 & #3 \\
+    \hline
+  \end{tabular}
+}
 
 % First page of chapters
 \fancypagestyle{plain}{
@@ -139,12 +172,68 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
 	\ifodd\value{page}\else\mbox{}\thispagestyle{empty}\fi%
 }
 
-\newcommand{\makeinfopage}{
-    TODO
-    Info page
+\newcommand{\namesigdate}[2][6cm]{%
+\begin{minipage}{#1}
+    #2 \vspace{1.33cm}\hrule\smallskip
+    \footnotesize \textit{Signature}
+    \vspace{1.33cm}\hrule\smallskip
+    \footnotesize \textit{Location, date}
+\end{minipage}
 }
 
-\newcommand{\newChapter}[1]{
+\newcommand{\makeinfopage}{
+    \cleardoublepage
+    \newgeometry{top=37mm, bottom=42mm, left=36mm, right=29mm, headheight=14pt}
+
+    \chapter*{Information}
+    \markboth{Information}{Information}
+    \addcontentsline{toc}{chapter}{Information}
+
+    \vspace{2em}
+
+    %=====================================================
+    \section*{Contact Information}
+
+    \begin{tabbing}
+    \'Author: \= \@Author\\
+          \> Graduate student - Computer Science\\
+          \> University of Applied Sciences Western Switzerland (HES-SO)\\\\
+
+    \'Phone:  \> \@PhoneNumber\\\\
+
+    \'Email:    \> \href{mailto:\@AuthorEmail}{\@AuthorEmail} 
+    \end{tabbing}
+
+    \vspace{2em}
+
+    %=====================================================
+    \section*{Declaration of Honor}
+
+    I hereby solemnly declare that I have personally and independently prepared
+    this paper. All quotations in the text have been marked as such, and the
+    paper or considerable parts of it have not previously been subject to any
+    examination or assessment.
+    
+    \vspace{2em}
+
+    \noindent\namesigdate{\@Author}\hfill
+
+    \vspace{2em}
+
+    \section*{Validation}
+    %=====================================================
+
+    \noindent Accepted by the HES-SO\thinspace//\thinspace Master (Switzerland, Lausanne) on a proposal from:
+
+    \vspace{3em}
+
+    \noindent\namesigdate{Prof. \@Supervisor \\Thesis project advisor}
+    \hfill\namesigdate{Prof. Pierre Pompili\\Departement director}
+
+    \restoregeometry
+}
+
+\newcommand{\newChapter}[2]{
   {
     \titleformat{\chapter}[display]
     {\normalfont\Large\filcenter\sffamily}
@@ -160,6 +249,7 @@ twoside=true,includehead,includefoot,heightrounded,headsep=1cm]{geometry}
       \Huge
     }
     \chapter{#1}
+    \label{#2}
     \newpage
   }
 }

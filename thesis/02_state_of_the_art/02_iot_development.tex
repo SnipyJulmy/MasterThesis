@@ -4,16 +4,16 @@
 \section{Introduction}
 \label{sec:iot_challenge_intro}
 
-\gls{IoT} has become a huge area of research and development over the past few
+Internet of Things has become a huge area of research and development over the past few
 years. With the emergence of data science and libraries for big data analysis
 like \gls{Hadoop} and \gls{Spark}, the scientist wants more and more data to
 analyse.
 
 Recovering environment data with embedded hardware is present from the start of
-the ’60s\cite{Community2017}. In contrary to standard computer systems embedded
+the '60s\cite{Community2017}. In contrary to standard computer systems, embedded
 systems and \gls{IoT} systems suffer of several challenges.
 
-This chapter introduce the challenges of the \gls{IoT} development, from the device
+This chapter introduces the challenge of the \gls{IoT} development, from the device
 itself to the software implementation. Then, we will set out the development of
 \gls{IoT} projects using general programming languages, framework for embedded
 development and \gls{DSL} for \gls{IoT} systems.
@@ -26,10 +26,10 @@ development and \gls{DSL} for \gls{IoT} systems.
 
 As the first challenge for the system development in \gls{IoT}, we should
 mention the disparity of the devices. The heterogeneity of the objects does not
-allow them to interact. \cite{midgar} To connect them we need a
+allow them to interact \cite{midgar}. In order to connect them, we need a
 common interface like a central server or a common description language.
 
-It exists a lot of various devices and development framework in the world of
+It exists various devices and development frameworks in the world of
 embedded hardware: Arduino, Raspberry PI, Mbed, SPL, Simba, Teensy, and so
 on. Each of them with specific properties and specific programming language.
 
@@ -38,20 +38,19 @@ on. Each of them with specific properties and specific programming language.
 
 One big limitation for \gls{IoT} system development is the power management. It
 directly affects the algorithms we can use and means that the solutions we
-create would always be the power-optimised one. \cite{Sneps-Sneppe2016} In
+create would always be the power-optimised one\cite{Sneps-Sneppe2016}. In
 general, the power management can be done by the operating, which is a luxury
 to have in most parts of the available devices.
 
 We have to mention in this context a technique named \gls{DPM}. The idea is to
-shut down the devices when they are doing nothing and turn them on when they
-need to receive/send data. In fact, it’s kind of a replacement for the
+shut down the devices when they aren't busy and turn them on when they
+need to receive/send data. In fact, it's kind of a replacement for the
 \gls{OS}. But using such a technique could cause latency and additional development.
 
 \subsection{Connectivity}
 \label{sec:connectivity}
 
-In order to communicate together, and as previously announce in the section,
-\ref{sec:heterogeneity} \gls{IoT} devices need to send information through
+In order to communicate together, and as previously announced in the section \ref{sec:heterogeneity}, \gls{IoT} devices need to send information through
 a standard interface. Developing such interface requires experience and knowledge
 in software development and programming language as well as a wide knowledge in
 the domain of sensor devices and objects to interconnects. \cite{midgar}
@@ -59,10 +58,10 @@ the domain of sensor devices and objects to interconnects. \cite{midgar}
 \subsection{More Challenges}
 \label{sec:more_challenges}
 
-Many more challenges exist in the area of \gls{IoT} development, they are not
-going to be dealt in this thesis because they are away from the main process
+Many more challenges exist in the area of \gls{IoT} development, they will not be dealt
+in this thesis because they are away from the main process
 of simplification we want to bring with \gls{APDL}. The following list mentions
-other challenges that may be interesting to deal in the future. 
+other challenges that may be interesting to be dealt in the future. 
 
 \begin{itemize}
 \item Engineering unit: Fahrenheit/Celsius, foot/metre, and so on…
@@ -88,43 +87,43 @@ data and we need to deal with.
 \label{sec:pl_for_iot}
 
 Using a programming language to create \gls{IoT} systems offer full control to
-the developer in them of device design, conception, management and development.
-In other hands, the developer has to do almost everything by itself. As mention
-in, \ref{sec:iot_challenge_optimisation} the great majority of the embedded
+the developer in terms of device design, conception, management and development.
+In other hands, the developer has to do almost everything by himself. As mentioned
+in \ref{sec:iot_challenge_optimisation}, the great majority of the embedded
 devices does not support an \gls{OS}.
 
 \subsection{General Programming Languages}
 \label{sec:gen_pl}
 
 Use a general programming language for \gls{IoT} development offers a lot to the
-user, he could design and implements almost anything he wants. Some language has
-incorporated a library and/or function in order to access the hardware directly so
+user, he could design and implement almost anything he wants. Some languages have
+incorporated a library and/or functions in order to access the hardware directly so
 anyone could develop an \gls{IoT} device.
 
-\textbf{C and C++} are both a good choice for such a project, compilation target are
-available for almost any platform and offers great speed and memory management.
-The very big advantage is that those languages are compiled, they don’t need a
+\textbf{C and C++} are both a good choice for such a project. Compilation targets are
+available for almost any platform and offer great speed and memory management.
+The very big advantage is as they are compiled languages, they don't need a
 runtime management and compiled binaries are very small for a device with a
 limited memory. From another point of view, the programmer needs to do almost
-everything by itself: memory management, pointer arithmetic error handling
+everything by himself: memory management, pointer arithmetic error handling
 and, if we use C, there is no standard library for data structure and algorithm.
 
 \textbf{Python} is a language to mention as well, it has been created in 1990
-by Guido van Rossum. \cite{Rossum:1995:PRM:869369} Instead of C and C++, Python
+by Guido van Rossum \cite{Rossum:1995:PRM:869369}. Instead of C and C++, Python
 needs a virtual machine in order to run and that is not acceptable for a small
 device. If the device we use owns an \gls{OS}, Python is one of the best choices
-for the development, the language owns a great community with tons of tutorials
-and library for the \gls{IoT} programming and especially with the Raspberry PI. We
+for the development. The language owns a great community with many tutorials
+and libraries for the \gls{IoT} programming and especially with the Raspberry PI. We
 could mention too that a tool named Cython\cite{behnel2010cython} is able to
 compile, after some work, a Python code to a C executable, which removes the
 interpreter and virtual machine needed at the origin. Another idea is to run
 Python without any \gls{OS}\cite{jakeedge2015}.
 
 \textbf{Java} is also a great choice if the development of the system involves
-various devices with different platforms and an \gls{OS} available. When we use C
-or C++, we need to clearly identify the hardware of choice. When we have
-multiple devices with various architecture, we have to code platform-specific
-code for each of them and that involve poor scaleability and reutilisability.
+various devices with different platforms and when an \gls{OS} is available. When we use C
+or C++, we need to clearly identify the hardware. When we have
+multiple devices with various architectures, we have to code platform-specific
+code for each of them and that involves poor scaleability and reutilisability.
 Java offers to run on any platform if an \gls{OS} and a \gls{JVM} is available.
 
 It exists a lot more programming language for \gls{IoT} development: Javascript,
@@ -135,7 +134,7 @@ programming language for \gls{IoT} systems.
 \subsection{Framework for embedded development}
 \label{sec:framework_for_embeded_dev}
 
-Over the past years, multiple framework for embedded systems appears and grew up.
+Over the past years, multiple frameworks for embedded systems appear and grew up.
 That kind of framework simplify a lot the development process for embedded and
 \gls{IoT} systems. We will explore in particular two of them: Arduino and
 Mbed.
@@ -144,7 +143,7 @@ Mbed.
 software\cite{Arduino2017}. Such an electronic card is capable of reading input
 like sensors or button, as well as generating output through serial or LED. In
 order to use the hardware, a programming language named Arduino as well and
-based on Wiring\cite{Arduino2017}, is provided. This language is kind of a
+based on Wiring\cite{Arduino2017} is provided. This language is kind of a
 subset of C but with the addition of classes.
 
 \textbf{Mbed} is an open-source operating system based on 32-bit ARM Cortex-M
@@ -155,17 +154,17 @@ is C++ with the addition of the Mbed SDK\cite{Toulson:2012:FEE:2385440}.
 \section{Domain Specific Languages for the Internet of Things}
 \label{sec:dsl_for_iot}
 
-Research and work has been done during the past year on the \gls{DSL} for the
-\gls{IoT}. As present in, \ref{sec:iot_challenges} \gls{IoT} projects may
-involve a lot of different aspect, technologies and knowledge. From hardware
-specification, to network protocols passing by software design and
-implementation. We are not going to present all the \gls{DSL} for the \gls{IoT},
-the ones we present has been chosen for the proximity with this thesis purpose.
+Research and work has been done during the past years on the \gls{DSL} for the
+\gls{IoT}. As presented in section \ref{sec:iot_challenges}, \gls{IoT} projects may
+involve a lot of different aspects, technologies and knowledge. From hardware
+specification to network protocols passing by software design and
+implementation, we are not going to present all the \gls{DSL} for the \gls{IoT}.
+We present the ones that have been chosen for the proximity with this thesis purpose.
 
-\textbf{Node-red} is a \gls{VDSML}, develop with Node.js and
+\textbf{Node-red} is a \gls{VDSML}, developed with Node.js and
 Javascript whose goal is to wire together hardware devices, API and online
-services. \cite{node-red} A flow based editor is provided in the browser and
-the user is invited to create nodes, wire them, deployed and run the projects
+services\cite{node-red}. A flow based editor is provided in the browser and
+the user is invited to create nodes, wire them, deploy and run the projects
 with a maximum of simplicity\cite{Salihbegovic2015}. The runtime engine is built
 on top of Node.js and make use of its event-driven and non-bloking model. This
 makes it ideal to run on small hardware such as Arduino or
@@ -176,8 +175,8 @@ used \gls{DSL} in the area of \gls{IoT}.
 software design approach to drive the development process\cite{Bertran2012}.
 The tool is focused on the \gls{SCC} architecture. The \gls{SCC} architecture is
 a pattern involved in a system like: building automation, application monitoring,
-robotics, autonomic computing\cite{Taylor:2009:SAF:1538494}. The tool suites
-include a domain-specific design language, a compiler to Java code, a simulator
+robotics, autonomic computing\cite{Taylor:2009:SAF:1538494}. The tool suite
+includes a domain-specific design language, a compiler to Java code, a simulator
 and a deployment framework. 
 
 \textbf{DSL-4-IoT} is an Editor-Designer based on a high level \gls{VPL},
@@ -197,16 +196,16 @@ others\cite{Mooser2017}.
 \section{Summary}
 \label{sec:iot_dev_summary}
 
-In this chapter we have presented some of the challenge of the \gls{IoT} world.
-Heterogeneity, power optimisation and connectivity huge problems. Then we
-present some general programming language available for the \gls{IoT}
-development as well as some framework that simplifies the design and
+In this chapter we have presented some of the challenges of the \gls{IoT} world.
+Heterogeneity, power optimisation and connectivity are huge problems. Then we
+presented some general programming languages available for the \gls{IoT}
+development as well as some frameworks that simplify the design and
 implementation of embedded devices. Finally, we have seen various \gls{DSL} who
-tried to solve some challenges and problems that encounter the \gls{IoT}
+tried to resolve challenges and problems encountered by the \gls{IoT}
 projects.
 
 The various \gls{DSL} we presented are solving some of the challenges of the
-\gls{IoT}. It’s not easy to solve all the challenges of the \gls{IoT} world, but
+\gls{IoT}. It's not easy to solve all the challenges of the \gls{IoT} world, but
 those \gls{DSL} offers a simple way to deal with some of them.
 
 %%% Local Variables:

@@ -7,3 +7,6 @@
 [submodule "APDL"]
 	path = APDL
 	url = git@github.com:SnipyJulmy/APDL.git
+[submodule "defense"]
+	path = defense
+	url = git@github.com:SnipyJulmy/APDL-oral-defense.git

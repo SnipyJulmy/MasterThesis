@@ -1,0 +1,63 @@
+project_name = "Example"
+
+@include "apdl_component.apdl"
+
+@device A {
+    id = uno
+    framework = arduino
+    @input t analogInput 1
+    @serial t update
+}
+
+@device B {
+    id = disco_f429zi
+    framework = mbed
+    @input temp analogInput 1
+    @input t2 tf temp
+    @serial t2 each 2 s
+}
+
+
+
+@device arduino1 {
+    id = uno
+    framework = arduino
+    @input rawTemp analogInput 1
+    @input lum analogInput 0
+    @input temp tf rawTemp
+    @input temp2 tf temp
+    @input lumTemp simpleOperator + lum temp
+    @input tempLum simpleOperator - temp lum
+    @input lc loopCounter
+    @serial lum each 1 s
+    @serial temp each 1 s
+    @serial temp2 update
+    @serial lumTemp update
+    @serial lc update
+}
+
+@device mbed1 {
+    id = disco_f429zi
+    framework = mbed
+    @input rawTemp analogInput PC_1
+    @input lum analogInput PC_3
+    @input temp tf rawTemp
+    @serial lum each 1 s
+    @serial temp each 1 s
+}
+
+@device arduino2 {
+    id = uno
+    framework = arduino
+    @input t analogInput 1
+    @input temp tf t
+    @serial temp each 1 s
+    @serial t each 1 s
+}
+
+@define transform def tf (x:int) -> float {
+    val B : int = 3975
+    val resistance : float = (float)(1023 - x) * 1000 / x
+    val temperature : float = 1 / (log(resistance/1000) / B + 1 / 298.15) - 273.15
+    return temperature
+}

@@ -1,0 +1,38 @@
+version : '2'
+services:
+  mosquitto-mqtt:
+    image: "toke/mosquitto"
+    container_name : "mosquitto-mqtt"
+    ports:
+      - "1883:1883"
+  influxdb:
+    image: "influxdb:latest"
+    container_name : "influxdb"
+    ports:
+      - "8086:8086"
+    expose:
+      - "8086"
+    volumes:
+      - ./data/influxdb:/var/lib/influxdb
+  visualization-server:
+    build:
+      context: ./visualization-server/target/docker/
+      dockerfile: Dockerfile
+    links :
+      - "influxdb"
+      - "mosquitto-mqtt"
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    links:
+      - "influxdb"
+    volumes:
+      - ./data/grafana:/var/lib/grafana
+  simple-publisher:
+    build:
+      context: ./simple-publisher/target/docker
+      dockerfile : Dockerfile
+    links :
+      - "mosquitto-mqtt"

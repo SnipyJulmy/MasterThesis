@@ -1,0 +1,46 @@
+@define input analogInput pin:id {
+    @gen mbed {
+        global = "AnalogIn @id(A@pin)"
+        setup = ""
+        loop = ""
+        expr = "@id"
+    }
+    @gen arduino {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "analogRead(@pin)"
+    }
+}
+
+@define input digitalInput pin:id {
+    @gen mbed {
+        global = "DigitalIn @id(D@pin)"
+        setup = ""
+        loop = ""
+        expr = "@id"
+    }
+    @gen arduino {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "digitalRead(@pin)"
+    }
+}
+
+@define component simpleOperator op:str {
+    @in x:num y:num
+    @out num
+    @gen mbed {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "@x @op @y"
+    }
+    @gen arduino {
+        global = ""
+        setup = ""
+        loop = ""
+        expr = "@x @op @y"
+    }
+}
